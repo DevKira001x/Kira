@@ -1,84 +1,94 @@
-local a=game["P\108\97\121\101\114\115"]["L\111\99\97\108\80\108\97\121\101\114"]
-local b=a["W\97\105\116\70\111\114\67\104\105\108\100"]("P\108\97\121\101\114\71\117\105")
-local c=Instance["n\101\119"]("S\99\114\101\101\110\71\117\105",b)
-c["N\97\109\101"]="KiraHubLogoToggle"
-c["R\101\115\101\116\79\110\83\112\97\119\110"]=false
+--อย่าก็อปหัดเขียนเองสะบ้าง
+local player = game.Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
-local d=Instance["n\101\119"]("I\109\97\103\101\66\117\116\116\111\110",c)
-d["S\105\122\101"]=UDim2["n\101\119"](0,48,0,48)
-d["P\111\115\105\116\105\111\110"]=UDim2["n\101\119"](0,15,0,15)
-d["B\97\99\107\103\114\111\117\110\100\84\114\97\110\115\112\97\114\101\110\99\121"]=1
-d["I\109\97\103\101"]="rbxassetid://18402198349"
-d["Z\73\110\100\101\120"]=100
 
-local e=Instance["n\101\119"]("S\99\114\101\101\110\71\117\105",b)
-e["N\97\109\101"]="KiraHubStealUI"
-e["R\101\115\101\116\79\110\83\112\97\119\110"]=false
+local logoGui = Instance.new("ScreenGui", playerGui)
+logoGui.Name = "KiraHubLogoToggle"
+logoGui.ResetOnSpawn = false
 
-local f=Instance["n\101\119"]("F\114\97\109\101")
-f["S\105\122\101"]=UDim2["n\101\119"](0,180,0,100)
-f["P\111\115\105\116\105\111\110"]=UDim2["n\101\119"](0,20,0,80)
-f["B\97\99\107\103\114\111\117\110\100\67\111\108\111\1143"]=Color3["f\114\111\109\82\71\66"](30,30,30)
-f["A\99\116\105\118\101"]=true
-f["D\114\97\103\103\97\98\108\101"]=true
-f["P\97\114\101\110\116"]=e
+local logoButton = Instance.new("ImageButton", logoGui)
+logoButton.Size = UDim2.new(0, 48, 0, 48)
+logoButton.Position = UDim2.new(0, 15, 0, 15)
+logoButton.BackgroundTransparency = 1
+logoButton.Image = "rbxassetid://18402198349" -- ใส่ Asset ID ของโลโก้ 'K' ที่อัปโหลดไป
+logoButton.ZIndex = 100
 
-local g=Instance["n\101\119"]("U\73\67\111\114\110\101\114",f)
-g["C\111\114\110\101\114\82\97\100\105\117\115"]=UDim["n\101\119"](0,10)
 
-local h=Instance["n\101\119"]("U\73\76\105\115\116\76\97\121\111\117\116",f)
-h["P\97\100\100\105\110\103"]=UDim["n\101\119"](0,5)
-h["F\105\108\108\68\105\114\101\99\116\105\111\110"]=Enum.FillDirection.Vertical
-h["S\111\114\116\79\114\100\101\114"]=Enum.SortOrder.LayoutOrder
-h["H\111\114\105\122\111\110\116\97\108\65\108\105\103\110\109\101\110\116"]=Enum.HorizontalAlignment.Center
-h["V\101\114\116\105\99\97\108\65\108\105\103\110\109\101\110\116"]=Enum.VerticalAlignment.Top
+local mainGui = Instance.new("ScreenGui", playerGui)
+mainGui.Name = "KiraHubStealUI"
+mainGui.ResetOnSpawn = false
 
-local i=Instance["n\101\119"]("T\101\120\116\76\97\98\101\108",f)
-i["S\105\122\101"]=UDim2["n\101\119"](1,-10,0,20)
-i["T\101\120\116"]="Kira Hub: Ready"
-i["F\111\110\116"]=Enum.Font.Gotham
-i["T\101\120\116\83\105\122\101"]=12
-i["T\101\120\116\67\111\108\111\1143"]=Color3["n\101\119"](1,1,1)
-i["B\97\99\107\103\114\111\117\110\100\84\114\97\110\115\112\97\114\101\110\99\121"]=1
-i["P\97\114\101\110\116"]=f
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 180, 0, 100)
+frame.Position = UDim2.new(0, 20, 0, 80)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Active = true
+frame.Draggable = true
+frame.Parent = mainGui
 
-local j=Instance["n\101\119"]("T\101\120\116\66\117\116\116\111\110",f)
-j["S\105\122\101"]=UDim2["n\101\119"](1,-10,0,30)
-j["T\101\120\116"]="Click Steal"
-j["F\111\110\116"]=Enum.Font.GothamBold
-j["T\101\120\116\83\105\122\101"]=12
-j["T\101\120\116\67\111\108\111\1143"]=Color3["n\101\119"](1,1,1)
-j["B\97\99\107\103\114\111\117\110\100\67\111\108\111\1143"]=Color3["f\114\111\109\82\71\66"](0,170,255)
-j["P\97\114\101\110\116"]=f
-Instance["n\101\119"]("U\73\67\111\114\110\101\114",j)["C\111\114\110\101\114\82\97\100\105\117\115"]=UDim["n\101\119"](0,6)
+local uicorner = Instance.new("UICorner", frame)
+uicorner.CornerRadius = UDim.new(0, 10)
 
-j["M\111\117\115\101\66\117\116\116\111\1101\67\108\105\99\107"]:Connect(function()
-	i["T\101\120\116"]="Kira Hub: Preparing..."
-	local k=a["C\104\97\114\97\99\116\101\114"] or a["C\104\97\114\97\99\116\101\114\65\100\100\101\100"]:Wait()
-	local l=k:FindFirstChild("H\117\109\97\110\111\105\100\82\111\111\116\80\97\114\116")
-	if not l then
-		i["T\101\120\116"]="Kira Hub: HRP Not Found"
+local layout = Instance.new("UIListLayout", frame)
+layout.Padding = UDim.new(0, 5)
+layout.FillDirection = Enum.FillDirection.Vertical
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+layout.VerticalAlignment = Enum.VerticalAlignment.Top
+
+local label = Instance.new("TextLabel")
+label.Size = UDim2.new(1, -10, 0, 20)
+label.Text = "Kira Hub: Ready"
+label.Font = Enum.Font.Gotham
+label.TextSize = 12
+label.TextColor3 = Color3.new(1, 1, 1)
+label.BackgroundTransparency = 1
+label.Parent = frame
+
+local button = Instance.new("TextButton")
+button.Size = UDim2.new(1, -10, 0, 30)
+button.Text = "Click Steal"
+button.Font = Enum.Font.GothamBold
+button.TextSize = 12
+button.TextColor3 = Color3.new(1, 1, 1)
+button.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
+button.Parent = frame
+Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+
+-- Steal Function
+button.MouseButton1Click:Connect(function()
+	label.Text = "Kira Hub: Preparing..."
+	local char = player.Character or player.CharacterAdded:Wait()
+	local hrp = char:FindFirstChild("HumanoidRootPart")
+	if not hrp then
+		label.Text = "Kira Hub: HRP Not Found"
 		return
 	end
-	for m=3,1,-1 do
-		i["T\101\120\116"]="Kira Hub: Stealing in "..m.."s..."
+
+	-- Countdown
+	for i = 1, 1, -1 do
+		label.Text = "Kira Hub: Stealing in " .. i .. "s..."
 		task.wait(1)
 	end
-	local n=false
-	for _,o in ipairs(workspace:GetDescendants()) do
-		if o:IsA("B\97\115\101\80\97\114\116") and o.Name=="D\101\108\105\118\101\114\121\72\105\116\98\111\120" then
-			n=true
+
+	local success = false
+	for _, obj in ipairs(workspace:GetDescendants()) do
+		if obj:IsA("BasePart") and obj.Name == "DeliveryHitbox" then
+			success = true
 			pcall(function()
-				firetouchinterest(l,o,0)
+				firetouchinterest(hrp, obj, 0)
 				task.wait(0.1)
-				firetouchinterest(l,o,1)
+				firetouchinterest(hrp, obj, 1)
 			end)
 		end
 	end
-	i["T\101\120\116"]=n and "Kira Hub: Steal Success!" or "Kira Hub: No Targets"
+
+	label.Text = success and "Kira Hub: Steal Success!" or "Kira Hub: No Targets"
 end)
 
-e["E\110\97\98\108\101\100"]=false
-d["M\111\117\115\101\66\117\116\116\111\1101\67\108\105\99\107"]:Connect(function()
-	e["E\110\97\98\108\101\100"]=not e["E\110\97\98\108\101\100"]
+-- 🟢 Toggle GUI
+mainGui.Enabled = false
+logoButton.MouseButton1Click:Connect(function()
+	mainGui.Enabled = not mainGui.Enabled
 end)
