@@ -11,7 +11,7 @@ local logoButton = Instance.new("ImageButton", logoGui)
 logoButton.Size = UDim2.new(0, 48, 0, 48)
 logoButton.Position = UDim2.new(0, 15, 0, 15)
 logoButton.BackgroundTransparency = 1
-logoButton.Image = "rbxassetid://18402198349" -- ใส่ Asset ID ของโลโก้ 'K' ที่อัปโหลดไป
+logoButton.Image = "rbxassetid://18402198349"
 logoButton.ZIndex = 100
 
 
