@@ -1,0 +1,74 @@
+local function _S(s)local c={}for i=1,#s do c[i]=string.char(s:byte(i)) end return table.concat(c) end
+
+local _I=game[_S("\80\108\97\121\101\114\115")].LocalPlayer
+local _Guis=Instance[_S("\110\101\119")]
+local _Gui=_Guis(_S("\83\99\114\101\101\110\71\117\105"))
+_Gui.Name=_S("\75\105\114\97\72\117\98\83\116\101\97\108\85\73")
+_Gui.ResetOnSpawn=false
+_Gui.Parent=_I:WaitForChild(_S("\80\108\97\121\101\114\71\117\105"))
+
+local _F=_Guis(_S("\70\114\97\109\101"))
+_F.Size=UDim2.new(0,180,0,100)
+_F.Position=UDim2.new(0,20,0,80)
+_F.BackgroundColor3=Color3.fromRGB(30,30,30)
+_F.Active=true
+_F.Draggable=true
+_F.Parent=_Gui
+
+local _C=_Guis(_S("\85\73\67\111\114\110\101\114"),_F)
+_C.CornerRadius=UDim.new(0,10)
+
+local _L=_Guis(_S("\85\73\76\105\115\116\76\97\121\111\117\116"),_F)
+_L.Padding=UDim.new(0,5)
+_L.FillDirection=Enum.FillDirection.Vertical
+_L.SortOrder=Enum.SortOrder.LayoutOrder
+_L.HorizontalAlignment=Enum.HorizontalAlignment.Center
+_L.VerticalAlignment=Enum.VerticalAlignment.Top
+
+local _Lbl=_Guis(_S("\84\101\120\116\76\97\98\101\108"))
+_Lbl.Size=UDim2.new(1,-10,0,20)
+_Lbl.Text="Kira Hub: Ready"
+_Lbl.Font=Enum.Font.Gotham
+_Lbl.TextSize=12
+_Lbl.TextColor3=Color3.new(1,1,1)
+_Lbl.BackgroundTransparency=1
+_Lbl.Parent=_F
+
+local _Btn=_Guis(_S("\84\101\120\116\66\117\116\116\111\110"))
+_Btn.Size=UDim2.new(1,-10,0,30)
+_Btn.Text="Click Steal"
+_Btn.Font=Enum.Font.GothamBold
+_Btn.TextSize=12
+_Btn.TextColor3=Color3.new(1,1,1)
+_Btn.BackgroundColor3=Color3.fromRGB(0,170,255)
+_Btn.Parent=_F
+local _BtnCorner=_Guis(_S("\85\73\67\111\114\110\101\114"),_Btn)
+_BtnCorner.CornerRadius=UDim.new(0,6)
+
+local function _f()
+    _Lbl.Text="Kira Hub: Preparing..."
+    local _c=_I.Character or _I.CharacterAdded:Wait()
+    local _hrp=_c:FindFirstChild("HumanoidRootPart")
+    if not _hrp then
+        _Lbl.Text="Kira Hub: HRP Not Found"
+        return
+    end
+    for _i=3,1,-1 do
+        _Lbl.Text="Kira Hub: Stealing in ".._i.."s..."
+        task.wait(1)
+    end
+    local _s=false
+    for _,_obj in ipairs(workspace:GetDescendants()) do
+        if _obj:IsA("BasePart") and _obj.Name=="DeliveryHitbox" then
+            _s=true
+            pcall(function()
+                firetouchinterest(_hrp,_obj,0)
+                task.wait(0.1)
+                firetouchinterest(_hrp,_obj,1)
+            end)
+        end
+    end
+    _Lbl.Text=(_s and "Kira Hub: Steal Success!" or "Kira Hub: No Targets")
+end
+
+_Btn.MouseButton1Click:Connect(_f)
