@@ -87,7 +87,7 @@ button.MouseButton1Click:Connect(function()
 	label.Text = success and "Kira Hub: Steal Success!" or "Kira Hub: No Targets"
 end)
 
--- 🟢 Toggle GUI
+
 mainGui.Enabled = false
 logoButton.MouseButton1Click:Connect(function()
 	mainGui.Enabled = not mainGui.Enabled
