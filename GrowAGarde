@@ -1,144 +1,204 @@
 --Kira001x
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local placeId = game.PlaceId
+
+local startTime = tick()
+local kicked = false
 
 
 local logoGui = Instance.new("ScreenGui", playerGui)
 logoGui.Name = "KiraHubLogoToggle"
 logoGui.ResetOnSpawn = false
 logoGui.IgnoreGuiInset = true
-logoGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
 local logoButton = Instance.new("ImageButton", logoGui)
 logoButton.Size = UDim2.new(0, 48, 0, 48)
 logoButton.Position = UDim2.new(0, 16, 1, -64)
 logoButton.BackgroundTransparency = 1
 logoButton.Image = "rbxassetid://18402198349"
-logoButton.ZIndex = 2
+logoButton.ZIndex = 10
 
 
 local mainGui = Instance.new("ScreenGui", playerGui)
-mainGui.Name = "KiraHubMainUI"
+mainGui.Name = "KiraHubUI"
 mainGui.ResetOnSpawn = false
 mainGui.IgnoreGuiInset = true
 mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 mainGui.Enabled = false
 
 local frame = Instance.new("Frame", mainGui)
-frame.Size = UDim2.new(0, 200, 0, 200)
+frame.Size = UDim2.new(0, 240, 0, 280)
 frame.Position = UDim2.new(0, 20, 0, 80)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.Active = true
 frame.Draggable = true
-frame.ZIndex = 1
-
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
-Instance.new("UIPadding", frame).PaddingTop = UDim.new(0, 10)
-Instance.new("UIPadding", frame).PaddingLeft = UDim.new(0, 10)
-Instance.new("UIPadding", frame).PaddingRight = UDim.new(0, 10)
-
-local layout = Instance.new("UIListLayout", frame)
-layout.Padding = UDim.new(0, 8)
-layout.FillDirection = Enum.FillDirection.Vertical
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-local stroke = Instance.new("UIStroke", frame)
-stroke.Thickness = 1.5
-stroke.Transparency = 0.25
-stroke.Color = Color3.fromRGB(255, 255, 255)
-
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
 
 local label = Instance.new("TextLabel", frame)
-label.Size = UDim2.new(1, 0, 0, 20)
-label.Text = "🧠 Kira Hub: Ready"
-label.Font = Enum.Font.Gotham
+label.Size = UDim2.new(1, -20, 0, 22)
+label.Position = UDim2.new(0, 10, 0, 6)
+label.Text = "🧠 Kira Hub - 60s"
+label.Font = Enum.Font.GothamBold
 label.TextSize = 13
 label.TextColor3 = Color3.new(1, 1, 1)
 label.BackgroundTransparency = 1
-label.ZIndex = 1
+label.TextXAlignment = Enum.TextXAlignment.Left
 
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 34)
+scroll.Size = UDim2.new(1, -20, 1, -60)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundTransparency = 1
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ClipsDescendants = true
 
-local seedButton = Instance.new("TextButton", frame)
-seedButton.Size = UDim2.new(1, 0, 0, 32)
-seedButton.Text = "🚀 Skip Time (Seed)"
-seedButton.Font = Enum.Font.GothamBold
-seedButton.TextSize = 13
-seedButton.TextColor3 = Color3.new(1, 1, 1)
-seedButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Instance.new("UICorner", seedButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", seedButton).Transparency = 0.3
+local layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
 
-seedButton.MouseButton1Click:Connect(function()
-	label.Text = "⏳ Kira Hub: Claiming Seed..."
-	local args = {
-		"Claim",
-		workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("SeedEventCraftingWorkBench"),
-		"SeedEventWorkbench",
-		1
-	}
-	ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-	label.Text = "✅ Kira Hub: Skip Time (Seed) Success!"
-end)
-
-
-local gearButton = Instance.new("TextButton", frame)
-gearButton.Size = UDim2.new(1, 0, 0, 32)
-gearButton.Text = "⚙️ Skip Time (Gear)"
-gearButton.Font = Enum.Font.GothamBold
-gearButton.TextSize = 13
-gearButton.TextColor3 = Color3.new(1, 1, 1)
-gearButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-Instance.new("UICorner", gearButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", gearButton).Transparency = 0.3
-
-gearButton.MouseButton1Click:Connect(function()
-	label.Text = "⏳ Kira Hub: Claiming Gear..."
-	local args = {
-		"Claim",
-		workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("EventCraftingWorkBench"),
-		"GearEventWorkbench",
-		1
-	}
-	ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-	label.Text = "✅ Kira Hub: Skip Time (Gear) Success!"
-end)
-
-
-local honeyButton = Instance.new("TextButton", frame)
-honeyButton.Size = UDim2.new(1, 0, 0, 32)
-honeyButton.Text = "🍯 Auto Honey"
-honeyButton.Font = Enum.Font.GothamBold
-honeyButton.TextSize = 13
-honeyButton.TextColor3 = Color3.new(1,1,1)
-honeyButton.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
-Instance.new("UICorner", honeyButton).CornerRadius = UDim.new(0, 6)
-
-honeyButton.MouseButton1Click:Connect(function()
-	ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("HoneyMachineService_RE"):FireServer("MachineInteract")
-	label.Text = "✅ Kira Hub: Honey Machine Activated!"
-end)
-
-
-local v1349Button = Instance.new("TextButton", frame)
-v1349Button.Size = UDim2.new(1, 0, 0, 32)
-v1349Button.Text = "🌐 V1349 Warp"
-v1349Button.Font = Enum.Font.GothamBold
-v1349Button.TextSize = 13
-v1349Button.TextColor3 = Color3.new(1,1,1)
-v1349Button.BackgroundColor3 = Color3.fromRGB(255, 100, 100)
-Instance.new("UICorner", v1349Button).CornerRadius = UDim.new(0, 6)
-
-v1349Button.MouseButton1Click:Connect(function()
-	local targetServerId = "158a4e57-abca-4b60-9398-599b08f0c790"
-	TeleportService:TeleportToPlaceInstance(placeId, targetServerId, player)
-end)
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.Position = UDim2.new(0, 5, 1, -24)
+credit.Text = "เขียนโดย Kira001x"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 11
+credit.TextColor3 = Color3.new(1, 1, 1)
+credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Right
 
 
 logoButton.MouseButton1Click:Connect(function()
 	mainGui.Enabled = not mainGui.Enabled
+end)
+
+--ยังบัค
+local dragging, dragInput, dragStart, startPos
+logoButton.InputBegan:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
+		dragging = true
+		dragStart = input.Position
+		startPos = logoButton.Position
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then dragging = false end
+		end)
+	end
+end)
+logoButton.InputChanged:Connect(function(input)
+	if input.UserInputType == Enum.UserInputType.MouseMovement then dragInput = input end
+end)
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		logoButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+	end
+end)
+
+
+local function createButton(text, color, callback)
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, 0, 0, 32)
+	button.Text = text
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 13
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.BackgroundColor3 = color
+	button.AutoButtonColor = true
+	button.ZIndex = 1
+	button.Parent = scroll
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+	Instance.new("UIStroke", button).Color = Color3.fromRGB(255, 255, 255)
+	button.MouseButton1Click:Connect(callback)
+end
+
+
+createButton("🚀 Skip Time (Seed)", Color3.fromRGB(0, 170, 255), function()
+	label.Text = "⏳ Claiming Seed..."
+	local args = {"Claim", workspace.Interaction.UpdateItems.NewCrafting.SeedEventCraftingWorkBench, "SeedEventWorkbench", 1}
+	game.ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer(unpack(args))
+	label.Text = "✅ Seed Claimed!"
+end)
+
+createButton("⚙️ Skip Time (Gear)", Color3.fromRGB(0, 170, 255), function()
+	label.Text = "⏳ Claiming Gear..."
+	local args = {"Claim", workspace.Interaction.UpdateItems.NewCrafting.EventCraftingWorkBench, "GearEventWorkbench", 1}
+	game.ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer(unpack(args))
+	label.Text = "✅ Gear Claimed!"
+end)
+
+createButton("🍯 Click Honey", Color3.fromRGB(255, 200, 0), function()
+	label.Text = "🍯 Using Honey Machine..."
+	game.ReplicatedStorage.GameEvents.HoneyMachineService_RE:FireServer("MachineInteract")
+	label.Text = "✅ Honey Used!"
+end)
+
+
+createButton("🛰 V1349: Warp Server", Color3.fromRGB(180, 120, 255), function()
+	local serverId = "158a4e57-abca-4b60-9398-599b08f0c790"
+	label.Text = "🛰 Warping to V1349..."
+	local success, err = pcall(function()
+		TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
+	end)
+	if not success then
+		label.Text = string.find(err, "full") and "🚫 Server Full (in queue)" or "❌ Error: " .. tostring(err)
+	end
+end)
+
+createButton("📋 Copy Server ID", Color3.fromRGB(100, 200, 100), function()
+	local id = game.JobId
+	setclipboard(id)
+	label.Text = "📋 Copied: " .. id
+end)
+
+
+local serverInput = Instance.new("TextBox", scroll)
+serverInput.Size = UDim2.new(1, 0, 0, 32)
+serverInput.PlaceholderText = "🔑 Enter Server ID to Join"
+serverInput.Text = ""
+serverInput.Font = Enum.Font.Gotham
+serverInput.TextSize = 13
+serverInput.TextColor3 = Color3.new(1, 1, 1)
+serverInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+serverInput.ClearTextOnFocus = false
+serverInput.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", serverInput).CornerRadius = UDim.new(0, 6)
+Instance.new("UIStroke", serverInput).Transparency = 0.4
+
+createButton("🔄 Join Server by ID", Color3.fromRGB(255, 170, 0), function()
+	local inputId = serverInput.Text
+	if inputId ~= "" then
+		label.Text = "🔄 Joining Server ID: " .. inputId
+		local success, err = pcall(function()
+			TeleportService:TeleportToPlaceInstance(placeId, inputId, player)
+		end)
+		label.Text = success and "✅ Warped!" or "❌ Failed: " .. tostring(err)
+	else
+		label.Text = "⚠️ กรุณาใส่ Server ID ก่อน!"
+	end
+end)
+
+
+task.spawn(function()
+	while not kicked do
+		task.wait(1)
+		local elapsed = math.floor(tick() - startTime)
+		local remaining = 300 - elapsed
+		if remaining <= 0 then
+			kicked = true
+			game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+				Text = "⏰ คุณอยู่ครบเวลาแล้ว ให้คนอื่นเขาบ้างนะครับ",
+				Color = Color3.fromRGB(255, 255, 255),
+				Font = Enum.Font.Gotham,
+				FontSize = Enum.FontSize.Size24
+			})
+			task.wait(1)
+			player:Kick("คุณอยู่ครบเวลาแล้ว ให้คนอื่นเขาบ้างนะครับ")
+		else
+			label.Text = "🧠 Kira Hub - " .. remaining .. "s"
+		end
+	end
 end)
