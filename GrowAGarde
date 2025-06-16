@@ -54,166 +54,6 @@ layout.FillDirection = Enum.FillDirection.Vertical
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- Status Label
-local label = Instance.new("TextLabel")
-label.Size = UDim2.new(1, 0, 0, 20)
-label.Text = "🧠 Kira Hub: Ready"
-label.Font = Enum.Font.Gotham
-label.TextSize = 13
-label.TextColor3 = Color3.new(1, 1, 1)
-label.BackgroundTransparency = 1
-label.ZIndex = 1
-label.Parent = frame
-
-
-local seedButton = Instance.new("TextButton")
-seedButton.Size = UDim2.new(1, 0, 0, 32)
-seedButton.Text = "🚀 Skip Time (Seed)"
-seedButton.Font = Enum.Font.GothamBold
-seedButton.TextSize = 13
-seedButton.TextColor3 = Color3.new(1, 1, 1)
-seedButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-seedButton.ZIndex = 1
-seedButton.Parent = frame
-
-Instance.new("UICorner", seedButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", seedButton).Transparency = 0.3
-
-seedButton.MouseButton1Click:Connect(function()
-	label.Text = "⏳ Kira Hub: Claiming Seed..."
-	local args = {
-		"Claim",
-		workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("SeedEventCraftingWorkBench"),
-		"SeedEventWorkbench",
-		1
-	}
-	game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-	label.Text = "✅ Kira Hub: Skip Time (Seed) Success!"
-end)
-
-
-local gearButton = Instance.new("TextButton")
-gearButton.Size = UDim2.new(1, 0, 0, 32)
-gearButton.Text = "⚙️ Skip Time (Gear)"
-gearButton.Font = Enum.Font.GothamBold
-gearButton.TextSize = 13
-gearButton.TextColor3 = Color3.new(1, 1, 1)
-gearButton.BackgroundColor3 = Color3.fromRGB(0, 170, 255)
-gearButton.ZIndex = 1
-gearButton.Parent = frame
-
-Instance.new("UICorner", gearButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", gearButton).Transparency = 0.3
-
-gearButton.MouseButton1Click:Connect(function()
-	label.Text = "⏳ Kira Hub: Claiming Gear..."
-	local args = {
-		"Claim",
-		workspace:WaitForChild("Interaction"):WaitForChild("UpdateItems"):WaitForChild("NewCrafting"):WaitForChild("EventCraftingWorkBench"),
-		"GearEventWorkbench",
-		1
-	}
-	game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-	label.Text = "✅ Kira Hub: Skip Time (Gear) Success!"
-end)
-
-
-local honeyButton = Instance.new("TextButton")
-honeyButton.Size = UDim2.new(1, 0, 0, 32)
-honeyButton.Text = "🍯 Auto Honey"
-honeyButton.Font = Enum.Font.GothamBold
-honeyButton.TextSize = 13
-honeyButton.TextColor3 = Color3.new(1, 1, 1)
-honeyButton.BackgroundColor3 = Color3.fromRGB(255, 170, 0)
-honeyButton.ZIndex = 1
-honeyButton.Parent = frame
-
-Instance.new("UICorner", honeyButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", honeyButton).Transparency = 0.3
-
-honeyButton.MouseButton1Click:Connect(function()
-	label.Text = "🍯 Kira Hub: Claiming Honey..."
-	local args = {
-		"MachineInteract"
-	}
-	game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("HoneyMachineService_RE"):FireServer(unpack(args))
-	label.Text = "✅ Kira Hub: Honey Claimed!"
-end)
-
-
-local joinButton = Instance.new("TextButton")
-joinButton.Size = UDim2.new(1, 0, 0, 32)
-joinButton.Text = "🛰️ V1349 (Join Server)"
-joinButton.Font = Enum.Font.GothamBold
-joinButton.TextSize = 13
-joinButton.TextColor3 = Color3.new(1, 1, 1)
-joinButton.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
-joinButton.ZIndex = 1
-joinButton.Parent = frame
-
-Instance.new("UICorner", joinButton).CornerRadius = UDim.new(0, 6)
-Instance.new("UIStroke", joinButton).Transparency = 0.3
-
-joinButton.MouseButton1Click:Connect(function()
-	label.Text = "🛰️ Kira Hub: Joining Server V1349..."
-	local TeleportService = game:GetService("TeleportService")
-	local Players = game:GetService("Players")
-	local player =--Kira001x
-local player = game.Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui")
-
-
-local logoGui = Instance.new("ScreenGui")
-logoGui.Name = "KiraHubLogoToggle"
-logoGui.ResetOnSpawn = false
-logoGui.IgnoreGuiInset = true
-logoGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-logoGui.Parent = playerGui
-
-local logoButton = Instance.new("ImageButton")
-logoButton.Size = UDim2.new(0, 48, 0, 48)
-logoButton.Position = UDim2.new(0, 16, 1, -64)
-logoButton.BackgroundTransparency = 1
-logoButton.Image = "rbxassetid://18402198349"
-logoButton.ZIndex = 2
-logoButton.Parent = logoGui
-
-
-local mainGui = Instance.new("ScreenGui")
-mainGui.Name = "KiraHubMainUI"
-mainGui.ResetOnSpawn = false
-mainGui.IgnoreGuiInset = true
-mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
-mainGui.Enabled = false
-mainGui.Parent = playerGui
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 220)
-frame.Position = UDim2.new(0, 20, 0, 80)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-frame.Active = true
-frame.Draggable = true
-frame.ZIndex = 1
-frame.Parent = mainGui
-
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
-
-local stroke = Instance.new("UIStroke", frame)
-stroke.Thickness = 1.5
-stroke.Transparency = 0.25
-stroke.Color = Color3.fromRGB(255, 255, 255)
-
-local padding = Instance.new("UIPadding", frame)
-padding.PaddingTop = UDim.new(0, 10)
-padding.PaddingLeft = UDim.new(0, 10)
-padding.PaddingRight = UDim.new(0, 10)
-
-local layout = Instance.new("UIListLayout", frame)
-layout.Padding = UDim.new(0, 8)
-layout.FillDirection = Enum.FillDirection.Vertical
-layout.SortOrder = Enum.SortOrder.LayoutOrder
-layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
 
 local label = Instance.new("TextLabel")
 label.Size = UDim2.new(1, 0, 0, 20)
@@ -250,6 +90,7 @@ seedButton.MouseButton1Click:Connect(function()
 	game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
 	label.Text = "✅ Kira Hub: Skip Time (Seed) Success!"
 end)
+
 
 local gearButton = Instance.new("TextButton")
 gearButton.Size = UDim2.new(1, 0, 0, 32)
@@ -318,16 +159,6 @@ joinButton.MouseButton1Click:Connect(function()
 	local TeleportService = game:GetService("TeleportService")
 	local Players = game:GetService("Players")
 	local player = Players.LocalPlayer
-	local placeId = game.PlaceId
-	local serverId = "0dd052d5-9ccd-4cc2-bc57-eb164382396b"
-	TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
-end)
-
-
-logoButton.MouseButton1Click:Connect(function()
-	mainGui.Enabled = not mainGui.Enabled
-end)
- Players.LocalPlayer
 	local placeId = game.PlaceId
 	local serverId = "0dd052d5-9ccd-4cc2-bc57-eb164382396b"
 	TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
