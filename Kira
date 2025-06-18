@@ -1,0 +1,313 @@
+--Kira001x
+local TeleportService = game:GetService("TeleportService")
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+local placeId = game.PlaceId
+
+local startTime = tick()
+local isKicked = false
+local kickEnabled = true
+local correctPassword = "1142"
+
+
+local logoGui = Instance.new("ScreenGui", playerGui)
+logoGui.Name = "KiraHubLogoToggle"
+logoGui.ResetOnSpawn = false
+logoGui.IgnoreGuiInset = true
+
+local logoButton = Instance.new("ImageButton", logoGui)
+logoButton.Size = UDim2.new(0, 48, 0, 48)
+logoButton.Position = UDim2.new(0, 16, 1, -64)
+logoButton.BackgroundTransparency = 1
+logoButton.Image = "rbxassetid://18402198349"
+logoButton.ZIndex = 10
+
+
+local mainGui = Instance.new("ScreenGui", playerGui)
+mainGui.Name = "KiraHubUI"
+mainGui.ResetOnSpawn = false
+mainGui.IgnoreGuiInset = true
+mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+mainGui.Enabled = false
+
+local frame = Instance.new("Frame", mainGui)
+frame.Size = UDim2.new(0, 240, 0, 320) -- เพิ่มความสูงเพื่อช่องพาสเวิร์ด
+frame.Position = UDim2.new(0, 20, 0, 80)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Active = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
+
+local label = Instance.new("TextLabel", frame)
+label.Size = UDim2.new(1, -20, 0, 22)
+label.Position = UDim2.new(0, 10, 0, 6)
+label.Text = "Kira Hub - 60s"
+label.Font = Enum.Font.GothamBold
+label.TextSize = 13
+label.TextColor3 = Color3.new(1, 1, 1)
+label.BackgroundTransparency = 1
+label.TextXAlignment = Enum.TextXAlignment.Left
+
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 34)
+scroll.Size = UDim2.new(1, -20, 1, -80) -- ปรับลดความสูงให้มีพื้นที่สำหรับช่องพาสเวิร์ด
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundTransparency = 1
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ClipsDescendants = true
+
+local layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.Position = UDim2.new(0, 5, 1, -24)
+credit.Text = "© เขียนโดย Kira001x"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 11
+credit.TextColor3 = Color3.new(1, 1, 1)
+credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Right
+
+
+logoButton.MouseButton1Click:Connect(function()
+    mainGui.Enabled = not mainGui.Enabled
+end)
+
+
+local dragging, dragStart, startPos, dragInput
+
+logoButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = true
+        dragStart = input.Position
+        startPos = logoButton.Position
+        dragInput = input
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        local delta = input.Position - dragStart
+        local newX = startPos.X.Offset + delta.X
+        local newY = startPos.Y.Offset + delta.Y
+        newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
+        logoButton.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local frameDragging, frameDragStart, frameStartPos, frameDragInput
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        frameDragging = true
+        frameDragStart = input.Position
+        frameStartPos = frame.Position
+        frameDragInput = input
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                frameDragging = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == frameDragInput and frameDragging then
+        local delta = input.Position - frameDragStart
+        local newX = frameStartPos.X.Offset + delta.X
+        local newY = frameStartPos.Y.Offset + delta.Y
+        newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+        frame.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local function createButton(text, color, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 0, 32)
+    button.Text = text
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 13
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = color
+    button.AutoButtonColor = true
+    button.ZIndex = 1
+    button.Parent = scroll
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
+    button.MouseButton1Click:Connect(callback)
+    return button
+end
+
+
+createButton("🚀 Skip Time (Seed)", Color3.fromRGB(0, 170, 255), function()
+    label.Text = "⏳ Claiming Seed..."
+    local args = {"Claim", workspace.Interaction.UpdateItems.NewCrafting.SeedEventCraftingWorkBench, "SeedEventWorkbench", 1}
+    game.ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer(unpack(args))
+    label.Text = "✅ Seed Claimed!"
+end)
+
+createButton("⚙️ Skip Time (Gear)", Color3.fromRGB(0, 170, 255), function()
+    label.Text = "⏳ Claiming Gear..."
+    local args = {"Claim", workspace.Interaction.UpdateItems.NewCrafting.EventCraftingWorkBench, "GearEventWorkbench", 1}
+    game.ReplicatedStorage.GameEvents.CraftingGlobalObjectService:FireServer(unpack(args))
+    label.Text = "✅ Gear Claimed!"
+end)
+
+createButton("🍯 Click Honey", Color3.fromRGB(255, 200, 0), function()
+    label.Text = "🍯 Using Honey Machine..."
+    game.ReplicatedStorage.GameEvents.HoneyMachineService_RE:FireServer("MachineInteract")
+    label.Text = "✅ Honey Used!"
+end)
+
+
+createButton("🛰 V1349: (Join Server1)", Color3.fromRGB(180, 120, 255), function()
+    local serverId = "843cacc3-cf2f-4e12-875c-814b511d0d3e"
+    label.Text = "🛰 Warping to V1349..."
+    local success, err = pcall(function()
+        TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
+    end)
+    if not success then
+        label.Text = string.find(err, "full") and "🚫 Server Full (in queue)" or "❌ Error: " .. tostring(err)
+    end
+end)
+
+createButton("🛰 V1349: (Join Server2)", Color3.fromRGB(180, 120, 255), function()
+    local serverId = "866f16ca-4b40-4db5-8392-7c31e0091239"
+    label.Text = "🛰 Warping to V1349..."
+    local success, err = pcall(function()
+        TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
+    end)
+    if not success then
+        label.Text = string.find(err, "full") and "🚫 Server Full (in queue)" or "❌ Error: " .. tostring(err)
+    end
+end)
+
+createButton("🛰 V1349: (Join Server3)", Color3.fromRGB(180, 120, 255), function()
+    local serverId = "716d29c8-c89c-406f-aba4-c465d2fb1a24"
+    label.Text = "🛰 Warping to V1349..."
+    local success, err = pcall(function()
+        TeleportService:TeleportToPlaceInstance(placeId, serverId, player)
+    end)
+    if not success then
+        label.Text = string.find(err, "full") and "🚫 Server Full (in queue)" or "❌ Error: " .. tostring(err)
+    end
+end)
+
+
+createButton("📋 Copy Server ID", Color3.fromRGB(100, 200, 100), function()
+    local id = game.JobId
+    local success, err = pcall(function()
+        setclipboard(id)
+    end)
+    if success then
+        label.Text = "📋 Copied: " .. id
+    else
+        label.Text = "❌ ไม่สามารถคัดลอกได้"
+    end
+end)
+
+
+local serverInput = Instance.new("TextBox", scroll)
+serverInput.Size = UDim2.new(1, 0, 0, 32)
+serverInput.PlaceholderText = "🔑 Enter Server ID to Join"
+serverInput.Text = ""
+serverInput.Font = Enum.Font.Gotham
+serverInput.TextSize = 13
+serverInput.TextColor3 = Color3.new(1, 1, 1)
+serverInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+serverInput.ClearTextOnFocus = false
+serverInput.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", serverInput).CornerRadius = UDim.new(0, 6)
+local stroke = Instance.new("UIStroke", serverInput)
+stroke.Transparency = 0.4
+
+createButton("🔄 Join Server by ID", Color3.fromRGB(255, 170, 0), function()
+    local inputId = serverInput.Text
+    if inputId ~= "" then
+        label.Text = "🔄 Joining Server ID: " .. inputId
+        local success, err = pcall(function()
+            TeleportService:TeleportToPlaceInstance(placeId, inputId, player)
+        end)
+        label.Text = success and "✅ Warped!" or "❌ Failed: " .. tostring(err)
+    else
+        label.Text = "⚠️ ใส่ Server ID ก่อน!"
+    end
+end)
+
+
+local passwordInput = Instance.new("TextBox", scroll)
+passwordInput.Size = UDim2.new(1, 0, 0, 32)
+passwordInput.PlaceholderText = "🔒 ใส่รหัสผ่านก่อนปิด Timer"
+passwordInput.Text = ""
+passwordInput.Font = Enum.Font.Gotham
+passwordInput.TextSize = 13
+passwordInput.TextColor3 = Color3.new(1, 1, 1)
+passwordInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+passwordInput.ClearTextOnFocus = false
+passwordInput.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", passwordInput).CornerRadius = UDim.new(0, 6)
+local passwordStroke = Instance.new("UIStroke", passwordInput)
+passwordStroke.Transparency = 0.4
+
+
+local kickButton = createButton("⏳ Kick Timer: ON", Color3.fromRGB(255, 70, 70), function()
+    if kickEnabled then
+        
+        local password = passwordInput.Text
+        if password == correctPassword then
+            kickEnabled = false
+            kickButton.Text = "⏸ Kick Timer: OFF"
+            label.Text = "⏸ Kick Timer: OFF"
+        else
+            label.Text = "❌ ต้องใส่รหัสผ่านก่อนปิด!"
+        end
+    else
+        
+        kickEnabled = true
+        startTime = tick() 
+        isKicked = false
+        kickButton.Text = "⏳ Kick Timer: ON"
+        label.Text = "⏳ Kick Timer: ON"
+    end
+end)
+
+
+task.spawn(function()
+    while true do
+        task.wait(1)
+        if kickEnabled and not isKicked then
+            local elapsed = math.floor(tick() - startTime)
+            local remaining = 300 - elapsed
+            if remaining <= 0 then
+                isKicked = true
+                game:GetService("StarterGui"):SetCore("ChatMakeSystemMessage", {
+                    Text = "⏰ คุณอยู่ครบเวลาแล้ว ให้คนอื่นเขาบ้างนะครับ",
+                    Color = Color3.fromRGB(255, 255, 255),
+                    Font = Enum.Font.Gotham,
+                    FontSize = Enum.FontSize.Size24
+                })
+                task.wait(1)
+                player:Kick("คุณอยู่ครบเวลาแล้ว ให้คนอื่นเขาบ้างนะครับ")
+            else
+                label.Text = " Kira Hub - " .. remaining .. "s"
+            end
+        elseif not isKicked then
+            label.Text = " Kira Hub - Timer Paused"
+        end
+    end
+end)
