@@ -172,7 +172,7 @@ createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
         logoGui:Destroy()
 
         
-        https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Kirahub
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Kirahub"))();
     else
         label.Text = "❌ Incorrect key!"
     end
