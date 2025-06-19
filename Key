@@ -208,7 +208,7 @@ Instance.new("UICorner", passwordInput).CornerRadius = UDim.new(0, 6)
 local passwordStroke = Instance.new("UIStroke", passwordInput)
 passwordStroke.Transparency = 0.4
 
-local correctKey = "นามข้าคือคิระ"
+local correctKey = "คิระ"
 createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
     if passwordInput.Text == correctKey then
         label.Text = "✅ Correct key! Loading..."
@@ -219,7 +219,7 @@ createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
         logoGui:Destroy()
 
         
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Kira"))()
+        https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Kirahub
     else
         label.Text = "❌ Incorrect key!"
     end
