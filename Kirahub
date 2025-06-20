@@ -15,7 +15,7 @@ local placeId = game.PlaceId
 local startTime = tick()
 local isKicked = false
 local kickEnabled = true
-local correctPassword = "1142"
+local correctPassword = "5050"
 
 local loopingSeed = false
 local loopingGear = false
@@ -243,7 +243,7 @@ task.spawn(function()
 	while true do
 		task.wait(1)
 		if kickEnabled and not isKicked then
-			local remaining = 1000 - math.floor(tick() - startTime)
+			local remaining = 200 - math.floor(tick() - startTime)
 			if remaining <= 0 then
 				isKicked = true
 				game.StarterGui:SetCore("ChatMakeSystemMessage", {
