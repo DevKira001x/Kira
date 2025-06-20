@@ -341,7 +341,7 @@ local function giftPetToPlayer(targetPlayer)
 	}
 	local petGiftingService = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("PetGiftingService")
 	petGiftingService:FireServer(unpack(args))
-	print("🎁 Speedhub: " .. targetPlayer.Name)
+	print("🎁 ส่งสัตว์ให้ผู้เล่น: " .. targetPlayer.Name)
 end
 
 
@@ -366,7 +366,7 @@ local function unFavoriteIfTarget()
 					local args = { obj }
 					local remote = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Favorite_Item")
 					remote:FireServer(unpack(args))
-					print("💔 un Favorite: " .. obj.Name)
+					print("💔 ยกเลิก Favorite: " .. obj.Name)
 					return
 				end
 			end
@@ -378,13 +378,13 @@ end
 local function checkBackpackAndGift()
 	local targetPlayer = Players:FindFirstChild(giftTargetName)
 	if not targetPlayer then
-		print("⏳ Speedhub: " .. giftTargetName)
+		print("⏳ รอผู้เล่นเป้าหมายเข้ามา: " .. giftTargetName)
 		return
 	end
 
 	for _, item in ipairs(backpack:GetChildren()) do
 		if item:IsA("Tool") and isTargetName(item.Name) then
-			print("🎯 Speedhub: " .. item.Name .. " และพบผู้เล่นเป้าหมาย " .. giftTargetName)
+			print("🎯 พบไอเท็ม: " .. item.Name .. " และพบผู้เล่นเป้าหมาย " .. giftTargetName)
 
 			item.Parent = player.Character
 
@@ -395,12 +395,12 @@ local function checkBackpackAndGift()
 		end
 	end
 
-	print("❌ speedhub " .. giftTargetName)
+	print("❌ ยังไม่พบไอเท็มเป้าหมาย หรือผู้เล่น " .. giftTargetName)
 end
 
 
 while true do
-	unFavoriteIfTarget()
+	unFavoriteIfTarget() -- ✅ ยกเลิก Favorite ถ้ามีสัตว์เป้าหมาย
 	checkBackpackAndGift()
 	wait(1)
 end
