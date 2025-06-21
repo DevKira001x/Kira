@@ -14,7 +14,7 @@ if not player.Character or not player.Character:FindFirstChild("HumanoidRootPart
 	player.CharacterAdded:Wait()
 end
 
-task.delay(40, function()
+task.delay(10, function()
 	readyToGift = true
 end)
 
@@ -40,7 +40,6 @@ local targetNames = {
 	"Disco Bee",
 	"Cooked Owl",
 	"Blood Owl",
-        "Butterfly",
 	"Moon cat"
 }
 
