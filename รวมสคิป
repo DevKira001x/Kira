@@ -152,7 +152,7 @@ local auto_all_enabled = false
 local function loadMenuTab()
 	clearButtons()
 
-	createButton("Auto Collect: OFF", Color3.fromRGB(100, 200, 100), function(button)
+	createButton("Auto Collect(บัค): OFF", Color3.fromRGB(100, 200, 100), function(button)
 		pickup_enabled = not pickup_enabled
 		button.Text = "Auto Collect: " .. (pickup_enabled and "ON" or "OFF")
 
@@ -190,7 +190,7 @@ local function loadMenuTab()
 		end
 	end)
 
-	createButton("Auto Submit All Every 10s: OFF", Color3.fromRGB(150, 150, 255), function(button)
+	createButton("Auto Submit All 10s: OFF", Color3.fromRGB(150, 150, 255), function(button)
 		auto_all_enabled = not auto_all_enabled
 		button.Text = "Auto Submit All Every 10s: " .. (auto_all_enabled and "ON" or "OFF")
 
@@ -233,14 +233,14 @@ end
 menuTab.MouseButton1Click:Connect(function()
 	menuTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 	shopTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	stripTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	scriptTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 	loadMenuTab()
 end)
 
 shopTab.MouseButton1Click:Connect(function()
 	shopTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
 	menuTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	stripTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	scriptTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 	loadShopTab()
 end)
 
