@@ -2,7 +2,7 @@
 --Kira001xห้ามก็อปห้ามส่องlocal P=game:GetService("Players")local U=game:GetService("UserInputService")local p=P.LocalPlayer local g=p:WaitForChild("PlayerGui")local l=Instance.new("ScreenGui",g)l.Name="KiraHubLogoToggle"l.ResetOnSpawn=false l.IgnoreGuiInset=true local b=Instance.new("ImageButton",l)b.Size=UDim2.new(0,48,0,48)b.Position=UDim2.new(0,16,1,-64)b.BackgroundTransparency=1 b.Image="rbxassetid://18402198349"b.ZIndex=10 local m=Instance.new("ScreenGui",g)m.Name="KiraHubUI"m.ResetOnSpawn=false m.IgnoreGuiInset=true m.ZIndexBehavior=Enum.ZIndexBehavior.Global m.Enabled=false local f=Instance.new("Frame",m)f.Size=UDim2.new(0,240,0,200)f.Position=UDim2.new(0,20,0,80)f.BackgroundColor3=Color3.fromRGB(30,30,30)f.Active=true Instance.new("UICorner",f).CornerRadius=UDim.new(0,10)Instance.new("UIStroke",f).Color=Color3.fromRGB(255,255,255)local t=Instance.new("TextLabel",f)t.Size=UDim2.new(1,-20,0,22)t.Position=UDim2.new(0,10,0,6)t.Text="🔐 Kira hub key"t.Font=Enum.Font.GothamBold t.TextSize=13 t.TextColor3=Color3.new(1,1,1)t.BackgroundTransparency=1 t.TextXAlignment=Enum.TextXAlignment.Left local s=Instance.new("ScrollingFrame",f)s.Position=UDim2.new(0,10,0,34)s.Size=UDim2.new(1,-20,1,-80)s.CanvasSize=UDim2.new(0,0,0,0)s.ScrollBarThickness=4 s.BackgroundTransparency=1 s.AutomaticCanvasSize=Enum.AutomaticSize.X s.ScrollingDirection=Enum.ScrollingDirection.X s.ClipsDescendants=true local ly=Instance.new("UIListLayout",s)ly.Padding=UDim.new(0,6)ly.SortOrder=Enum.SortOrder.LayoutOrder ly.FillDirection=Enum.FillDirection.Horizontal ly.HorizontalAlignment=Enum.HorizontalAlignment.Left local c=Instance.new("TextLabel",f)c.Size=UDim2.new(1,-10,0,20)c.Position=UDim2.new(0,5,1,-24)c.Text="© Written by Kira001x"c.Font=Enum.Font.Gotham c.TextSize=11 c.TextColor3=Color3.new(1,1,1)c.BackgroundTransparency=1 c.TextXAlignment=Enum.TextXAlignment.Right b.MouseButton1Click:Connect(function()m.Enabled=not m.Enabled end)local d,ds,sp,di b.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then d=true ds=i.Position sp=b.Position di=i i.Changed:Connect(function()if i.UserInputState==Enum.UserInputState.End then d=false end end)end end)U.InputChanged:Connect(function(i)if i==di and d then local delta=i.Position-ds local x=math.clamp(sp.X.Offset+delta.X,0,workspace.CurrentCamera.ViewportSize.X-b.AbsoluteSize.X)local y=math.clamp(sp.Y.Offset+delta.Y,0,workspace.CurrentCamera.ViewportSize.Y-b.AbsoluteSize.Y)b.Position=UDim2.new(0,x,0,y)end end)local fd,fds,fsp,fdi f.InputBegan:Connect(function(i)if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then fd=true fds=i.Position fsp=f.Position fdi=i i.Changed:Connect(function()if i.UserInputState==Enum.UserInputState.End then fd=false end end)end end)U.InputChanged:Connect(function(i)if i==fdi and fd then local delta=i.Position-fds local x=math.clamp(fsp.X.Offset+delta.X,0,workspace.CurrentCamera.ViewportSize.X-f.AbsoluteSize.X)local y=math.clamp(fsp.Y.Offset+delta.Y,0,workspace.CurrentCamera.ViewportSize.Y-f.AbsoluteSize.Y)f.Position=UDim2.new(0,x,0,y)end end)local function createButton(txt,col,cb)local btn=Instance.new("TextButton")btn.Size=UDim2.new(0,180,0,32)btn.Text=txt btn.Font=Enum.Font.GothamB
 
 
---Kira001x
+-- Kira001x
 local TeleportService = game:GetService("TeleportService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -30,10 +30,11 @@ mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 mainGui.Enabled = false
 
 local frame = Instance.new("Frame", mainGui)
-frame.Size = UDim2.new(0, 240, 0, 320)
+frame.Size = UDim2.new(0, 240, 0, 240)
 frame.Position = UDim2.new(0, 20, 0, 80)
 frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 frame.Active = true
+frame.Draggable = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
 
@@ -53,25 +54,23 @@ tabFrame.Position = UDim2.new(0, 10, 0, 30)
 tabFrame.BackgroundTransparency = 1
 tabFrame.ZIndex = 2
 
-local noKeyTab = Instance.new("TextButton", tabFrame)
-noKeyTab.Size = UDim2.new(0.5, -2, 1, 0)
-noKeyTab.Position = UDim2.new(0, 0, 0, 0)
-noKeyTab.Text = "NoKey"
-noKeyTab.Font = Enum.Font.GothamBold
-noKeyTab.TextSize = 13
-noKeyTab.TextColor3 = Color3.new(1, 1, 1)
-noKeyTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-Instance.new("UICorner", noKeyTab).CornerRadius = UDim.new(0, 6)
+local function createTabButton(name, pos)
+	local button = Instance.new("TextButton", tabFrame)
+	button.Size = UDim2.new(1/3, -4, 1, 0)
+	button.Position = UDim2.new(pos, pos * 2, 0, 0)
+	button.Text = name
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 13
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+	return button
+end
 
-local keyTab = Instance.new("TextButton", tabFrame)
-keyTab.Size = UDim2.new(0.5, -2, 1, 0)
-keyTab.Position = UDim2.new(0.5, 2, 0, 0)
-keyTab.Text = "Key"
-keyTab.Font = Enum.Font.GothamBold
-keyTab.TextSize = 13
-keyTab.TextColor3 = Color3.new(1, 1, 1)
-keyTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Instance.new("UICorner", keyTab).CornerRadius = UDim.new(0, 6)
+local menuTab = createTabButton("Menu", 0)
+menuTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+local shopTab = createTabButton("Shop", 1/3)
+local stripTab = createTabButton("Strip", 2/3)
 
 local scroll = Instance.new("ScrollingFrame", frame)
 scroll.Position = UDim2.new(0, 10, 0, 60)
@@ -100,9 +99,10 @@ logoButton.MouseButton1Click:Connect(function()
 	mainGui.Enabled = not mainGui.Enabled
 end)
 
-local dragging, dragStart, startPos, dragInput
+-- Make logo draggable
+local dragging, dragInput, dragStart, startPos
 logoButton.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+	if input.UserInputType == Enum.UserInputType.MouseButton1 then
 		dragging = true
 		dragStart = input.Position
 		startPos = logoButton.Position
@@ -116,33 +116,17 @@ end)
 UserInputService.InputChanged:Connect(function(input)
 	if input == dragInput and dragging then
 		local delta = input.Position - dragStart
-		local newX = math.clamp(startPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
-		local newY = math.clamp(startPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
-		logoButton.Position = UDim2.new(0, newX, 0, newY)
+		logoButton.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 	end
 end)
 
-local frameDragging, frameDragStart, frameStartPos, frameDragInput
-frame.InputBegan:Connect(function(input)
-	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-		frameDragging = true
-		frameDragStart = input.Position
-		frameStartPos = frame.Position
-		frameDragInput = input
-		input.Changed:Connect(function()
-			if input.UserInputState == Enum.UserInputState.End then frameDragging = false end
-		end)
+local function clearButtons()
+	for _, child in ipairs(scroll:GetChildren()) do
+		if child:IsA("TextButton") or child:IsA("TextBox") or child:IsA("Frame") then
+			child:Destroy()
+		end
 	end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-	if input == frameDragInput and frameDragging then
-		local delta = input.Position - frameDragStart
-		local newX = math.clamp(frameStartPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
-		local newY = math.clamp(frameStartPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
-		frame.Position = UDim2.new(0, newX, 0, newY)
-	end
-end)
+end
 
 local function createButton(text, color, callback)
 	local button = Instance.new("TextButton")
@@ -157,21 +141,76 @@ local function createButton(text, color, callback)
 	button.Parent = scroll
 	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
 	Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
-	button.MouseButton1Click:Connect(function()
-		callback(button)
-	end)
+	button.MouseButton1Click:Connect(function() callback(button) end)
 	return button
 end
 
-local function clearButtons()
-	for _, child in ipairs(scroll:GetChildren()) do
-		if child:IsA("TextButton") or child:IsA("TextBox") then
-			child:Destroy()
+-- Menu tab logic
+local pickup_enabled = false
+local auto_all_enabled = false
+
+local function loadMenuTab()
+	clearButtons()
+
+	createButton("Auto Collect: OFF", Color3.fromRGB(100, 200, 100), function(button)
+		pickup_enabled = not pickup_enabled
+		button.Text = "Auto Collect: " .. (pickup_enabled and "ON" or "OFF")
+
+		if pickup_enabled then
+			task.spawn(function()
+				local CollectController = require(game:GetService("ReplicatedStorage").Modules.CollectController)
+				local workspace_ref = game:GetService("Workspace")
+				local local_player = game:GetService("Players").LocalPlayer
+				CollectController._lastCollected = 0
+				CollectController._holding = true
+				CollectController:_updateButtonState()
+				local farm_model
+				for _, d in next, workspace_ref:FindFirstChild("Farm"):GetDescendants() do
+					if d.Name == "Owner" and d.Value == local_player.Name then
+						farm_model = d.Parent and d.Parent.Parent
+						break
+					end
+				end
+				while pickup_enabled and farm_model do
+					local plants = farm_model:FindFirstChild("Plants_Physical")
+					if plants then
+						for _, p in next, plants:GetChildren() do
+							if p:IsA("Model") then
+								CollectController:Collect(p)
+								for _, o in next, p:GetDescendants() do
+									CollectController:Collect(o)
+									task.wait(0.01)
+								end
+							end
+						end
+					end
+					task.wait(0.01)
+				end
+			end)
 		end
-	end
+	end)
+
+	createButton("Auto Submit All Every 10s: OFF", Color3.fromRGB(150, 150, 255), function(button)
+		auto_all_enabled = not auto_all_enabled
+		button.Text = "Auto Submit All Every 10s: " .. (auto_all_enabled and "ON" or "OFF")
+
+		if auto_all_enabled then
+			task.spawn(function()
+				while auto_all_enabled do
+					local args = {"SubmitAllPlants"}
+					game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SummerHarvestRemoteEvent"):FireServer(unpack(args))
+					task.wait(10)
+				end
+			end)
+		end
+	end)
 end
 
-local function loadNoKeyTab()
+local function loadShopTab()
+	clearButtons()
+end
+
+local function loadScriptTab()
 	clearButtons()
 	createButton("⚡ Speed Hub", Color3.fromRGB(255, 120, 0), function()
 		label.Text = "⚡ Loading Speed Hub..."
@@ -185,29 +224,31 @@ local function loadNoKeyTab()
 		label.Text = "🛠 Loading NoLag Hub..."
 		loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/NoLag-id/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
 	end)
-end
-
-local function loadKeyTab()
-	clearButtons()
 	createButton("🌙 Lunor Hub", Color3.fromRGB(180, 100, 255), function()
 		label.Text = "🌙 Loading Lunor Hub..."
 		loadstring(game:HttpGet("https://lunor.dev/loader"))()
 	end)
 end
 
-noKeyTab.MouseButton1Click:Connect(function()
-	noKeyTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-	keyTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	loadNoKeyTab()
+menuTab.MouseButton1Click:Connect(function()
+	menuTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	shopTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	stripTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	loadMenuTab()
 end)
 
-keyTab.MouseButton1Click:Connect(function()
-	keyTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-	noKeyTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-	loadKeyTab()
+shopTab.MouseButton1Click:Connect(function()
+	shopTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	menuTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	stripTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	loadShopTab()
 end)
 
-loadNoKeyTab()
+stripTab.MouseButton1Click:Connect(function()
+	stripTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+	menuTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	shopTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+	loadStripTab()
+end)
 
-
-loadstring(game:HttpGet("https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Ke"))();
+loadMenuTab()
