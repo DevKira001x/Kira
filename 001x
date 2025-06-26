@@ -1,0 +1,318 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+
+local logoGui = Instance.new("ScreenGui", playerGui)
+logoGui.Name = "KiraHubLogoToggle"
+logoGui.ResetOnSpawn = false
+logoGui.IgnoreGuiInset = true
+
+local logoButton = Instance.new("ImageButton", logoGui)
+logoButton.Size = UDim2.new(0, 48, 0, 48)
+logoButton.Position = UDim2.new(0, 16, 1, -64)
+logoButton.BackgroundTransparency = 1
+logoButton.Image = "rbxassetid://18402198349"
+logoButton.ZIndex = 10
+
+
+local draggingLogo = false
+local dragStartLogo, startPosLogo, dragInputLogo
+
+logoButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingLogo = true
+        dragStartLogo = input.Position
+        startPosLogo = logoButton.Position
+        dragInputLogo = input
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingLogo = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInputLogo and draggingLogo then
+        local delta = input.Position - dragStartLogo
+        local newX = startPosLogo.X.Offset + delta.X
+        local newY = startPosLogo.Y.Offset + delta.Y
+
+        
+        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
+
+        logoButton.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local mainGui = Instance.new("ScreenGui", playerGui)
+mainGui.Name = "KiraHubUI"
+mainGui.ResetOnSpawn = false
+mainGui.IgnoreGuiInset = true
+mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+mainGui.Enabled = false
+
+local frame = Instance.new("Frame", mainGui)
+frame.Size = UDim2.new(0, 240, 0, 240)
+frame.Position = UDim2.new(0, 20, 0, 80)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Active = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
+
+
+local draggingFrame = false
+local dragStartFrame, startPosFrame, dragInputFrame
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingFrame = true
+        dragStartFrame = input.Position
+        startPosFrame = frame.Position
+        dragInputFrame = input
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingFrame = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInputFrame and draggingFrame then
+        local delta = input.Position - dragStartFrame
+        local newX = startPosFrame.X.Offset + delta.X
+        local newY = startPosFrame.Y.Offset + delta.Y
+
+        
+        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+
+        frame.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local label = Instance.new("TextLabel", frame)
+label.Size = UDim2.new(1, -20, 0, 22)
+label.Position = UDim2.new(0, 10, 0, 6)
+label.Text = "Kira Hub"
+label.Font = Enum.Font.GothamBold
+label.TextSize = 13
+label.TextColor3 = Color3.new(1, 1, 1)
+label.BackgroundTransparency = 1
+label.TextXAlignment = Enum.TextXAlignment.Left
+
+
+local tabFrame = Instance.new("Frame", frame)
+tabFrame.Size = UDim2.new(1, -20, 0, 26)
+tabFrame.Position = UDim2.new(0, 10, 0, 30)
+tabFrame.BackgroundTransparency = 1
+
+local function createTabButton(name, pos)
+    local button = Instance.new("TextButton", tabFrame)
+    button.Size = UDim2.new(1/3, -4, 1, 0)
+    button.Position = UDim2.new(pos, pos * 2, 0, 0)
+    button.Text = name
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 13
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+    return button
+end
+
+local menuTab = createTabButton("Menu", 0)
+menuTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+local shopTab = createTabButton("Shop", 1/3)
+local scriptTab = createTabButton("Script", 2/3)
+
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 60)
+scroll.Size = UDim2.new(1, -20, 1, -106)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundTransparency = 1
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ClipsDescendants = true
+
+local layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.Position = UDim2.new(0, 5, 1, -24)
+credit.Text = "© 001x"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 11
+credit.TextColor3 = Color3.new(1, 1, 1)
+credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Right
+
+
+logoButton.MouseButton1Click:Connect(function()
+    mainGui.Enabled = not mainGui.Enabled
+end)
+
+
+local function clearButtons()
+    for _, child in ipairs(scroll:GetChildren()) do
+        if child:IsA("TextButton") or child:IsA("TextBox") or child:IsA("Frame") then
+            child:Destroy()
+        end
+    end
+end
+
+local function createButton(text, color, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 0, 32)
+    button.Text = text
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 13
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = color
+    button.AutoButtonColor = true
+    button.ZIndex = 1
+    button.Parent = scroll
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
+    button.MouseButton1Click:Connect(function()
+        callback(button)
+    end)
+    return button
+end
+
+
+local pickup_enabled = false
+local auto_all_enabled = false
+local buySeedLoop = false
+
+
+local function loadMenuTab()
+    clearButtons()
+    createButton("Collect: OFF(บัค)", Color3.fromRGB(100, 200, 100), function(button)
+        pickup_enabled = not pickup_enabled
+        button.Text = "Collect: " .. (pickup_enabled and "ON" or "OFF")
+        if pickup_enabled then
+            task.spawn(function()
+                local CollectController = require(ReplicatedStorage.Modules.CollectController)
+                local farm_model
+                for _, d in Workspace.Farm:GetDescendants() do
+                    if d.Name == "Owner" and d.Value == player.Name then
+                        farm_model = d.Parent and d.Parent.Parent
+                        break
+                    end
+                end
+                while pickup_enabled and farm_model do
+                    for _, p in pairs(farm_model.Plants_Physical:GetChildren()) do
+                        if p:IsA("Model") then
+                            CollectController:Collect(p)
+                            for _, o in pairs(p:GetDescendants()) do
+                                CollectController:Collect(o)
+                                task.wait(0.01)
+                            end
+                        end
+                    end
+                    task.wait(0.01)
+                end
+            end)
+        end
+    end)
+
+    createButton("Submit All 10s: OFF", Color3.fromRGB(150, 150, 255), function(button)
+        auto_all_enabled = not auto_all_enabled
+        button.Text = "Submit All 10s: " .. (auto_all_enabled and "ON" or "OFF")
+        if auto_all_enabled then
+            task.spawn(function()
+                while auto_all_enabled do
+                    ReplicatedStorage.GameEvents.SummerHarvestRemoteEvent:FireServer("SubmitAllPlants")
+                    task.wait(10)
+                end
+            end)
+        end
+    end)
+end
+
+
+local function loadShopTab()
+    clearButtons()
+    createButton("Buy Seed All: OFF", Color3.fromRGB(255, 100, 100), function(button)
+        buySeedLoop = not buySeedLoop
+        button.Text = buySeedLoop and "Buy Seed All: ON" or "Buy Seed All: OFF"
+        if buySeedLoop then
+            task.spawn(function()
+                while buySeedLoop do
+                    local seeds = {
+                        "Carrot", "Tomato", "Cauliflower", "Blueberry", "Strawberry",
+                        "Avocado", "Banana", "Watermelon", "Kiwi", "Bell Pepper",
+                        "Pineapple", "Green Apple", "Feijoa", "Loquat", "Prickly Pear"
+                    }
+                    for _, name in ipairs(seeds) do
+                        task.spawn(function()
+                            pcall(function()
+                                ReplicatedStorage.GameEvents.BuySeedStock:FireServer(name)
+                            end)
+                        end)
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        end
+    end)
+end
+
+
+local function loadScriptTab()
+    clearButtons()
+    createButton("⚡ Speed Hub", Color3.fromRGB(255, 120, 0), function()
+        label.Text = "⚡ Loading Speed Hub..."
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/AhmadV99/Speed-Hub-X/main/Speed%20Hub%20X.lua", true))()
+    end)
+    createButton("🔮 Nat hub", Color3.fromRGB(120, 180, 255), function()
+        label.Text = "🔮 Loading Nathub..."
+        loadstring(game:HttpGet("https://get.nathub.xyz/loader"))()
+    end)
+    createButton("🛠 NoLag Hub", Color3.fromRGB(255, 100, 100), function()
+        label.Text = "🛠 Loading NoLag Hub..."
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/NoLag-id/No-Lag-HUB/refs/heads/main/Loader/LoaderV1.lua"))()
+    end)
+    createButton("🌙 Lunor Hub (key)", Color3.fromRGB(180, 100, 255), function()
+        label.Text = "🌙 Loading Lunor Hub..."
+        loadstring(game:HttpGet("https://lunor.dev/loader"))()
+    end)
+end
+
+
+menuTab.MouseButton1Click:Connect(function()
+    menuTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    shopTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    scriptTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    loadMenuTab()
+end)
+
+shopTab.MouseButton1Click:Connect(function()
+    menuTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    shopTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    scriptTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    loadShopTab()
+end)
+
+scriptTab.MouseButton1Click:Connect(function()
+    menuTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    shopTab.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    scriptTab.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    loadScriptTab()
+end)
+
+
+loadMenuTab()
