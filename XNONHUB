@@ -1,0 +1,186 @@
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
+
+
+local logoGui = Instance.new("ScreenGui", playerGui)
+logoGui.Name = "KiraHubLogoToggle"
+logoGui.ResetOnSpawn = false
+logoGui.IgnoreGuiInset = true
+
+local logoButton = Instance.new("ImageButton", logoGui)
+logoButton.Size = UDim2.new(0, 48, 0, 48)
+logoButton.Position = UDim2.new(0, 16, 1, -64)
+logoButton.BackgroundTransparency = 1
+logoButton.Image = "rbxassetid://18402198349"
+logoButton.ZIndex = 10
+
+
+local draggingLogo = false
+local dragStartLogo, startPosLogo, dragInputLogo
+
+logoButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingLogo = true
+        dragStartLogo = input.Position
+        startPosLogo = logoButton.Position
+        dragInputLogo = input
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingLogo = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInputLogo and draggingLogo then
+        local delta = input.Position - dragStartLogo
+        local newX = startPosLogo.X.Offset + delta.X
+        local newY = startPosLogo.Y.Offset + delta.Y
+
+        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
+
+        logoButton.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local mainGui = Instance.new("ScreenGui", playerGui)
+mainGui.Name = "KiraHubUI"
+mainGui.ResetOnSpawn = false
+mainGui.IgnoreGuiInset = true
+mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+mainGui.Enabled = false
+
+local frame = Instance.new("Frame", mainGui)
+frame.Size = UDim2.new(0, 240, 0, 110)
+frame.Position = UDim2.new(0, 20, 0, 80)
+frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Active = true
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
+
+
+local draggingFrame = false
+local dragStartFrame, startPosFrame, dragInputFrame
+
+frame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        draggingFrame = true
+        dragStartFrame = input.Position
+        startPosFrame = frame.Position
+        dragInputFrame = input
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                draggingFrame = false
+            end
+        end)
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInputFrame and draggingFrame then
+        local delta = input.Position - dragStartFrame
+        local newX = startPosFrame.X.Offset + delta.X
+        local newY = startPosFrame.Y.Offset + delta.Y
+
+        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
+        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+
+        frame.Position = UDim2.new(0, newX, 0, newY)
+    end
+end)
+
+
+local label = Instance.new("TextLabel", frame)
+label.Size = UDim2.new(1, -20, 0, 22)
+label.Position = UDim2.new(0, 5, 0)
+label.Text = "XNON HUB"
+label.Font = Enum.Font.GothamBold
+label.TextSize = 13
+label.TextColor3 = Color3.new(1, 1, 1)
+label.BackgroundTransparency = 1
+label.TextXAlignment = Enum.TextXAlignment.Left
+
+
+local scroll = Instance.new("ScrollingFrame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 40)
+scroll.Size = UDim2.new(1, -20, 1, -70)
+scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+scroll.ScrollBarThickness = 4
+scroll.BackgroundTransparency = 1
+scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+scroll.ClipsDescendants = true
+
+local layout = Instance.new("UIListLayout", scroll)
+layout.Padding = UDim.new(0, 6)
+layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+
+local credit = Instance.new("TextLabel", frame)
+credit.Size = UDim2.new(1, -10, 0, 20)
+credit.Position = UDim2.new(0, 5, 1, -24)
+credit.Text = "©001x"
+credit.Font = Enum.Font.Gotham
+credit.TextSize = 11
+credit.TextColor3 = Color3.new(1, 1, 1)
+credit.BackgroundTransparency = 1
+credit.TextXAlignment = Enum.TextXAlignment.Right
+
+
+logoButton.MouseButton1Click:Connect(function()
+    mainGui.Enabled = not mainGui.Enabled
+end)
+
+
+local function clearButtons()
+    for _, child in ipairs(scroll:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+end
+
+
+local function createButton(text, color, callback)
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 0, 32)
+    button.Text = text
+    button.Font = Enum.Font.GothamBold
+    button.TextSize = 13
+    button.TextColor3 = Color3.new(1, 1, 1)
+    button.BackgroundColor3 = color
+    button.AutoButtonColor = true
+    button.ZIndex = 1
+    button.Parent = scroll
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
+    Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
+    button.MouseButton1Click:Connect(function()
+        callback(button)
+    end)
+    return button
+end
+
+
+clearButtons()
+createButton("TP Egg", Color3.fromRGB(200, 100, 255), function()
+    local character = player.Character or player.CharacterAdded:Wait()
+    local hrp = character:WaitForChild("HumanoidRootPart")
+
+    for _, obj in pairs(Workspace:GetDescendants()) do
+        if obj.Name:match("^Egg of") and (obj:IsA("BasePart") or obj:IsA("Model")) then
+            local pos = obj:IsA("Model") and obj:GetPivot().Position or obj.Position
+            hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
+            warn("Teleported to Egg:", obj.Name)
+            break
+        end
+    end
+end)
