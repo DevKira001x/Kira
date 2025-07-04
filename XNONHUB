@@ -2,6 +2,7 @@ local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
 local Workspace = game:GetService("Workspace")
+local HttpService = game:GetService("HttpService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -19,7 +20,6 @@ logoButton.BackgroundTransparency = 1
 logoButton.Image = "rbxassetid://18402198349"
 logoButton.ZIndex = 10
 
-
 local draggingLogo = false
 local dragStartLogo, startPosLogo, dragInputLogo
 
@@ -29,7 +29,6 @@ logoButton.InputBegan:Connect(function(input)
         dragStartLogo = input.Position
         startPosLogo = logoButton.Position
         dragInputLogo = input
-
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 draggingLogo = false
@@ -43,10 +42,8 @@ UserInputService.InputChanged:Connect(function(input)
         local delta = input.Position - dragStartLogo
         local newX = startPosLogo.X.Offset + delta.X
         local newY = startPosLogo.Y.Offset + delta.Y
-
         newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
         newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
-
         logoButton.Position = UDim2.new(0, newX, 0, newY)
     end
 end)
@@ -67,7 +64,6 @@ frame.Active = true
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
 
-
 local draggingFrame = false
 local dragStartFrame, startPosFrame, dragInputFrame
 
@@ -77,7 +73,6 @@ frame.InputBegan:Connect(function(input)
         dragStartFrame = input.Position
         startPosFrame = frame.Position
         dragInputFrame = input
-
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 draggingFrame = false
@@ -91,10 +86,8 @@ UserInputService.InputChanged:Connect(function(input)
         local delta = input.Position - dragStartFrame
         local newX = startPosFrame.X.Offset + delta.X
         local newY = startPosFrame.Y.Offset + delta.Y
-
         newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
         newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
-
         frame.Position = UDim2.new(0, newX, 0, newY)
     end
 end)
@@ -135,10 +128,55 @@ credit.TextColor3 = Color3.new(1, 1, 1)
 credit.BackgroundTransparency = 1
 credit.TextXAlignment = Enum.TextXAlignment.Right
 
-
 logoButton.MouseButton1Click:Connect(function()
     mainGui.Enabled = not mainGui.Enabled
 end)
+
+-- ฟังก์ชันส่ง Webhook
+local function sendEggWebhook(playerName, eggName)
+    local url = "https://discord.com/api/webhooks/1389850931193053205/J_qUUtF5Vv6aK0qT8OW4rDv9DRFNDgeV1HF622MPsDcB1s1qwzrDMcJ9A-oxE3WOaSAo"
+
+    local embedData = {
+        ["embeds"] = {{
+            ["title"] = "จาก XNON HUB",
+            ["description"] = string.format("**ชื่อ:** `%s`\n**เจอไข่:** `%s`\n**เวลา:** `%s`",
+                playerName,
+                eggName,
+                os.date("%H:%M:%S")
+            ),
+            ["color"] = 0x00ffcc,
+            ["footer"] = {
+                ["text"] = "https://discord.gg/ZENSyVq8KD"
+            }
+        }}
+    }
+
+    local headers = {
+        ["Content-Type"] = "application/json"
+    }
+
+    local body = HttpService:JSONEncode(embedData)
+
+    local requestFunc = http_request or request or syn and syn.request or http
+    local success, err = pcall(function()
+        if requestFunc then
+            requestFunc({
+                Url = url,
+                Method = "POST",
+                Headers = headers,
+                Body = body
+            })
+        else
+            HttpService:PostAsync(url, body, Enum.HttpContentType.ApplicationJson)
+        end
+    end)
+
+    if success then
+        warn("✅ ส่ง Webhook สำเร็จ:", eggName)
+    else
+        warn("❌ ส่ง Webhook ไม่สำเร็จ:", err)
+    end
+end
 
 
 local function clearButtons()
@@ -148,7 +186,6 @@ local function clearButtons()
         end
     end
 end
-
 
 local function createButton(text, color, callback)
     local button = Instance.new("TextButton")
@@ -180,6 +217,8 @@ createButton("TP Egg", Color3.fromRGB(200, 100, 255), function()
             local pos = obj:IsA("Model") and obj:GetPivot().Position or obj.Position
             hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
             warn("Teleported to Egg:", obj.Name)
+
+            sendEggWebhook(player.Name, obj.Name)
             break
         end
     end
