@@ -138,7 +138,7 @@ local function sendEggWebhook(playerName, eggName)
 
     local embedData = {
         ["embeds"] = {{
-            ["title"] = "จาก XNON HUB",
+            ["title"] = "XNON HUB",
             ["description"] = string.format("**ชื่อ:** `%s`\n**เจอไข่:** `%s`\n**เวลา:** `%s`",
                 playerName,
                 eggName,
