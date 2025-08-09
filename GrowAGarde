@@ -250,7 +250,7 @@ local Seeds = {
     "Daffodil", "Corn", "Watermelon", "Pumpkin", "Bamboo",
     "Coconut", "Dragon Fruit", "Cactus", "Mango", "Grape",
     "Pepper", "Mushroom", "Cacao", "Beanstalk", "Ember Lily",
-    "Sugar Apple", "Burning Bud", "Giant Pinecone"
+    "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"
 }
 
 local selectedSeed = nil
@@ -318,7 +318,9 @@ local Gears = {
     "Magnifying Glass",
     "Levelup Lollipop",
     "Medium Treat",
-    "Medium Toy"
+    "Medium Toy",
+    "Grandmaster Sprinkler",
+    "Tradig Ticket"
 }
 
 local selectedGear = nil
