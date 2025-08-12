@@ -674,8 +674,8 @@ local petsService = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("P
 
 local toggleSwapLoop = false
 
-Tabs.Main:AddToggle("SwapLoadout", {
-    Title = "Swap Pet Loadout",
+Tabs.Main:AddToggle("SwapPetLoadout", {
+    Title = "PetLv",
     Default = false,
     Callback = function(state)
         toggleSwapLoop = state
@@ -684,11 +684,11 @@ Tabs.Main:AddToggle("SwapLoadout", {
                 while toggleSwapLoop do
                     -- รัน SwapPetLoadout 1
                     petsService:FireServer("SwapPetLoadout", 1)
-                    task.wait(6) -- รอ 6 วินาที
+                    task.wait(8) -- รอ 6 วินาที
 
                     -- รัน SwapPetLoadout 2
                     petsService:FireServer("SwapPetLoadout", 2)
-                    task.wait(6) -- รอ 6 วินาทีก่อนวนใหม่
+                    task.wait(8) -- รอ 6 วินาทีก่อนวนใหม่
                 end
             end)
         end
