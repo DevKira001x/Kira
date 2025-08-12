@@ -320,7 +320,7 @@ local Gears = {
     "Medium Treat",
     "Medium Toy",
     "Grandmaster Sprinkler",
-    "Tradig Ticket"
+    "Trading Ticket"
 }
 
 local selectedGear = nil
