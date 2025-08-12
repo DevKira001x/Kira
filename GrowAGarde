@@ -668,4 +668,31 @@ Tabs.Log:AddToggle("TpZen", {
     end
 })
 
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local petsService = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("PetsService")
+
+local toggleSwapLoop = false
+
+Tabs.Main:AddToggle("SwapLoadout", {
+    Title = "Swap Pet Loadout",
+    Default = false,
+    Callback = function(state)
+        toggleSwapLoop = state
+        if state then
+            task.spawn(function()
+                while toggleSwapLoop do
+                    -- รัน SwapPetLoadout 1
+                    petsService:FireServer("SwapPetLoadout", 1)
+                    task.wait(6) -- รอ 6 วินาที
+
+                    -- รัน SwapPetLoadout 2
+                    petsService:FireServer("SwapPetLoadout", 2)
+                    task.wait(6) -- รอ 6 วินาทีก่อนวนใหม่
+                end
+            end)
+        end
+    end
+})
+
 SaveManager:LoadAutoloadConfig()
