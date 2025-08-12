@@ -1,12 +1,85 @@
 local Players = game:GetService("Players")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local UserInputService = game:GetService("UserInputService")
-local Workspace = game:GetService("Workspace")
 local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+local KEY_URL = "https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/Key%20Time"
+local SCRIPT_URL = "https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/GrowAGarde"
+local WEBHOOK_URL = "https://discord.com/api/webhooks/1404732436704661514/Mc6OiHftEc_22Lc39A8bJp9DUhflScydP9JezYhkndvj9NViHAa56wCnol_Gh159HWmc"
+
+local function fetchKeyData()
+    local success, response = pcall(function()
+        return game:HttpGet(KEY_URL)
+    end)
+    if success then
+        local ok, data = pcall(function()
+            return HttpService:JSONDecode(response)
+        end)
+        if ok then
+            return data
+        end
+    end
+    return nil
+end
+
+local keyData = fetchKeyData()
+if not keyData then
+    warn("ไม่สามารถโหลดข้อมูลคีย์ได้")
+    return
+end
+
+local function keyIsValid(key, timeout)
+    if shared.KeyData then
+        local storedKey, lastTime = shared.KeyData.key, shared.KeyData.time
+        if storedKey == key and (tick() - lastTime) < timeout then
+            return true
+        end
+    end
+    return false
+end
+
+local function sendWebhookSimple(playerName, serverId, key, status)
+    local embedData = {
+        ["embeds"] = {{
+            ["title"] = "XNON HUB",
+            ["description"] = string.format("**ชื่อ:** `%s`\n**Server ID:** `%s`\n**Key:** `%s`\n**Status:** `%s`", playerName, serverId, key or "None", status),
+            ["color"] = status == "Valid" and 0x00ffcc or 0xff0000,
+            ["footer"] = { ["text"] = "@001x" }
+        }}
+    }
+    local headers = { ["Content-Type"] = "application/json" }
+    local body = HttpService:JSONEncode(embedData)
+    local requestFunc = http_request or request or syn and syn.request or http
+
+    local success, err = pcall(function()
+        if requestFunc then
+            requestFunc({ Url = WEBHOOK_URL, Method = "POST", Headers = headers, Body = body })
+        else
+            HttpService:PostAsync(WEBHOOK_URL, body, Enum.HttpContentType.ApplicationJson)
+        end
+    end)
+
+    if not success then
+        warn("❌ ไม่สามารถส่ง Webhook:", err)
+    end
+end
+
+local function loadScriptWithKey(key)
+    shared.KeyData = { key = key, time = tick() }
+    sendWebhookSimple(player.Name, tostring(game.JobId), key, "Valid")
+    loadstring(game:HttpGet(SCRIPT_URL))()
+end
+
+-- ถ้าเคยใส่คีย์ถูกและยังไม่หมดเวลาจะโหลดสคริปต์ทันที
+if shared.KeyData and keyData[shared.KeyData.key] then
+    if keyIsValid(shared.KeyData.key, keyData[shared.KeyData.key]) then
+        loadScriptWithKey(shared.KeyData.key)
+        return
+    end
+end
 
 local logoGui = Instance.new("ScreenGui", playerGui)
 logoGui.Name = "KiraHubLogoToggle"
@@ -17,37 +90,32 @@ local logoButton = Instance.new("ImageButton", logoGui)
 logoButton.Size = UDim2.new(0, 48, 0, 48)
 logoButton.Position = UDim2.new(0, 16, 1, -64)
 logoButton.BackgroundTransparency = 1
-logoButton.Image = "rbxassetid://18402198349"
+logoButton.Image = "rbxassetid://112379455354342"
 logoButton.ZIndex = 10
 
-local draggingLogo = false
-local dragStartLogo, startPosLogo, dragInputLogo
-
-logoButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        draggingLogo = true
-        dragStartLogo = input.Position
-        startPosLogo = logoButton.Position
-        dragInputLogo = input
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                draggingLogo = false
-            end
-        end)
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInputLogo and draggingLogo then
-        local delta = input.Position - dragStartLogo
-        local newX = startPosLogo.X.Offset + delta.X
-        local newY = startPosLogo.Y.Offset + delta.Y
-        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
-        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
-        logoButton.Position = UDim2.new(0, newX, 0, newY)
-    end
-end)
-
+local function enableDragging(guiObject)
+    local dragging, dragStart, startPos, dragInput
+    guiObject.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = guiObject.Position
+            dragInput = input
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then dragging = false end
+            end)
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            local newX = math.clamp(startPos.X.Offset + delta.X, 0, workspace.CurrentCamera.ViewportSize.X - guiObject.AbsoluteSize.X)
+            local newY = math.clamp(startPos.Y.Offset + delta.Y, 0, workspace.CurrentCamera.ViewportSize.Y - guiObject.AbsoluteSize.Y)
+            guiObject.Position = UDim2.new(0, newX, 0, newY)
+        end
+    end)
+end
+enableDragging(logoButton)
 
 local mainGui = Instance.new("ScreenGui", playerGui)
 mainGui.Name = "KiraHubUI"
@@ -57,71 +125,54 @@ mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 mainGui.Enabled = false
 
 local frame = Instance.new("Frame", mainGui)
-frame.Size = UDim2.new(0, 240, 0, 110)
-frame.Position = UDim2.new(0, 20, 0, 80)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.Size = UDim2.new(0, 280, 0, 200)
+frame.Position = UDim2.new(0, 25, 0, 80)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
 frame.Active = true
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
+enableDragging(frame)
 
-local draggingFrame = false
-local dragStartFrame, startPosFrame, dragInputFrame
-
-frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        draggingFrame = true
-        dragStartFrame = input.Position
-        startPosFrame = frame.Position
-        dragInputFrame = input
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                draggingFrame = false
-            end
-        end)
-    end
+local closeButton = Instance.new("TextButton", frame)
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -30, 0, 6)
+closeButton.Text = "✖"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+closeButton.BorderSizePixel = 0
+Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 6)
+closeButton.MouseButton1Click:Connect(function()
+    mainGui.Enabled = false
 end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInputFrame and draggingFrame then
-        local delta = input.Position - dragStartFrame
-        local newX = startPosFrame.X.Offset + delta.X
-        local newY = startPosFrame.Y.Offset + delta.Y
-        newX = math.clamp(newX, 0, Workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
-        newY = math.clamp(newY, 0, Workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
-        frame.Position = UDim2.new(0, newX, 0, newY)
-    end
-end)
-
 
 local label = Instance.new("TextLabel", frame)
 label.Size = UDim2.new(1, -20, 0, 22)
-label.Position = UDim2.new(0, 5, 0)
-label.Text = "XNON HUB"
+label.Position = UDim2.new(0, 10, 0, 6)
+label.Text = "🔐 key System"
 label.Font = Enum.Font.GothamBold
 label.TextSize = 13
 label.TextColor3 = Color3.new(1, 1, 1)
 label.BackgroundTransparency = 1
 label.TextXAlignment = Enum.TextXAlignment.Left
 
-
-local scroll = Instance.new("ScrollingFrame", frame)
-scroll.Position = UDim2.new(0, 10, 0, 40)
-scroll.Size = UDim2.new(1, -20, 1, -70)
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-scroll.ScrollBarThickness = 4
+local scroll = Instance.new("Frame", frame)
+scroll.Position = UDim2.new(0, 10, 0, 34)
+scroll.Size = UDim2.new(1, -20, 1, -80)
 scroll.BackgroundTransparency = 1
-scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scroll.ClipsDescendants = true
 
 local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 6)
+layout.Padding = UDim.new(0, 8)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
-
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, -10, 0, 20)
 credit.Position = UDim2.new(0, 5, 1, -24)
-credit.Text = "©001x"
+credit.Text = "© by001x"
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 11
 credit.TextColor3 = Color3.new(1, 1, 1)
@@ -132,64 +183,27 @@ logoButton.MouseButton1Click:Connect(function()
     mainGui.Enabled = not mainGui.Enabled
 end)
 
--- ฟังก์ชันส่ง Webhook
-local function sendEggWebhook(playerName, eggName)
-    local url = "https://discord.com/api/webhooks/1389850931193053205/J_qUUtF5Vv6aK0qT8OW4rDv9DRFNDgeV1HF622MPsDcB1s1qwzrDMcJ9A-oxE3WOaSAo"
+local passwordInput = Instance.new("TextBox", scroll)
+passwordInput.Size = UDim2.new(1, -10, 0, 32)
+passwordInput.PlaceholderText = "🔑 Enter key to load script"
+passwordInput.Text = ""
+passwordInput.Font = Enum.Font.Gotham
+passwordInput.TextSize = 13
+passwordInput.TextColor3 = Color3.new(1, 1, 1)
+passwordInput.PlaceholderColor3 = Color3.fromRGB(170, 170, 170)
+passwordInput.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
+passwordInput.ClearTextOnFocus = false
+passwordInput.TextXAlignment = Enum.TextXAlignment.Left
+Instance.new("UICorner", passwordInput).CornerRadius = UDim.new(0, 6)
+local passwordStroke = Instance.new("UIStroke", passwordInput)
+passwordStroke.Color = Color3.fromRGB(100, 100, 120)
+passwordStroke.Thickness = 1
+passwordStroke.Transparency = 0.4
 
-    local embedData = {
-        ["embeds"] = {{
-            ["title"] = "XNON HUB",
-            ["description"] = string.format("**ชื่อ:** `%s`\n**เจอไข่:** `%s`\n**เวลา:** `%s`",
-                playerName,
-                eggName,
-                os.date("%H:%M:%S")
-            ),
-            ["color"] = 0x00ffcc,
-            ["footer"] = {
-                ["text"] = "https://discord.gg/ZENSyVq8KD"
-            }
-        }}
-    }
-
-    local headers = {
-        ["Content-Type"] = "application/json"
-    }
-
-    local body = HttpService:JSONEncode(embedData)
-
-    local requestFunc = http_request or request or syn and syn.request or http
-    local success, err = pcall(function()
-        if requestFunc then
-            requestFunc({
-                Url = url,
-                Method = "POST",
-                Headers = headers,
-                Body = body
-            })
-        else
-            HttpService:PostAsync(url, body, Enum.HttpContentType.ApplicationJson)
-        end
-    end)
-
-    if success then
-        warn("✅ ส่ง Webhook สำเร็จ:", eggName)
-    else
-        warn("❌ ส่ง Webhook ไม่สำเร็จ:", err)
-    end
-end
-
-
-local function clearButtons()
-    for _, child in ipairs(scroll:GetChildren()) do
-        if child:IsA("TextButton") then
-            child:Destroy()
-        end
-    end
-end
-
+-- ปุ่มยืนยันคีย์
 local function createButton(text, color, callback)
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, 0, 0, 32)
+    button.Size = UDim2.new(1, -10, 0, 34)
     button.Text = text
     button.Font = Enum.Font.GothamBold
     button.TextSize = 13
@@ -198,28 +212,65 @@ local function createButton(text, color, callback)
     button.AutoButtonColor = true
     button.ZIndex = 1
     button.Parent = scroll
-    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
-    button.MouseButton1Click:Connect(function()
-        callback(button)
-    end)
+    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 8)
+    local stroke = Instance.new("UIStroke", button)
+    stroke.Color = Color3.fromRGB(0, 0, 0)
+    stroke.Thickness = 1.2
+    button.MouseButton1Click:Connect(callback)
     return button
 end
 
-
-clearButtons()
-createButton("TP Egg", Color3.fromRGB(200, 100, 255), function()
-    local character = player.Character or player.CharacterAdded:Wait()
-    local hrp = character:WaitForChild("HumanoidRootPart")
-
-    for _, obj in pairs(Workspace:GetDescendants()) do
-        if obj.Name:match("^Egg of") and (obj:IsA("BasePart") or obj:IsA("Model")) then
-            local pos = obj:IsA("Model") and obj:GetPivot().Position or obj.Position
-            hrp.CFrame = CFrame.new(pos + Vector3.new(0, 5, 0))
-            warn("Teleported to Egg:", obj.Name)
-
-            sendEggWebhook(player.Name, obj.Name)
-            break
+local confirmBtn = createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
+    local enteredKey = passwordInput.Text
+    if keyData[enteredKey] then
+        if keyIsValid(enteredKey, keyData[enteredKey]) then
+            label.Text = "✅ Key still valid! Loading..."
+            sendWebhookSimple(player.Name, tostring(game.JobId), enteredKey, "Valid")
+            loadScriptWithKey(enteredKey)
+            mainGui:Destroy()
+            logoGui:Destroy()
+        else
+            shared.KeyData = { key = enteredKey, time = tick() }
+            label.Text = "✅ Correct key! Loading..."
+            sendWebhookSimple(player.Name, tostring(game.JobId), enteredKey, "Valid")
+            loadScriptWithKey(enteredKey)
+            mainGui:Destroy()
+            logoGui:Destroy()
         end
+    else
+        label.Text = "❌ Incorrect key!"
+        sendWebhookSimple(player.Name, tostring(game.JobId), enteredKey, "Invalid")
+        pcall(function()
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "XNON HUB",
+                Text = "❌ คีย์ไม่ถูกต้อง กรุณาลองใหม่",
+                Icon = "rbxassetid://79996080860226",
+                Duration = 5,
+            })
+        end)
     end
 end)
+
+local discordBtn = createButton("📎 Get Key (Discord)", Color3.fromRGB(0, 200, 255), function()
+    setclipboard("https://discord.gg/znS8C7Dmv3")
+    pcall(function()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "XNON HUB",
+            Text = "📎 ลิงก์ Discord ถูกคัดลอกไปยังคลิปบอร์ดแล้ว!",
+            Icon = "rbxassetid://79996080860226",
+            Duration = 5,
+        })
+    end)
+    label.Text = "📎 Link copied to clipboard!"
+end)
+
+if not (shared.KeyData and keyData[shared.KeyData.key] and keyIsValid(shared.KeyData.key, keyData[shared.KeyData.key])) then
+    pcall(function()
+        game.StarterGui:SetCore("SendNotification", {
+            Title = "XNON HUB",
+            Icon = "rbxassetid://79996080860226",
+            Text = "สามารถเอาคีย์ได้ที่ Discord กด Get Key",
+            Duration = 8,
+        })
+    end)
+end
