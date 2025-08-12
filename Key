@@ -11,7 +11,7 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
-
+-- GUI สำหรับ Toggle
 local logoGui = Instance.new("ScreenGui", playerGui)
 logoGui.Name = "KiraHubLogoToggle"
 logoGui.ResetOnSpawn = false
@@ -21,10 +21,10 @@ local logoButton = Instance.new("ImageButton", logoGui)
 logoButton.Size = UDim2.new(0, 48, 0, 48)
 logoButton.Position = UDim2.new(0, 16, 1, -64)
 logoButton.BackgroundTransparency = 1
-logoButton.Image = "rbxassetid://103272742549261"
+logoButton.Image = "rbxassetid://112379455354342"
 logoButton.ZIndex = 10
 
-
+-- GUI หลัก
 local mainGui = Instance.new("ScreenGui", playerGui)
 mainGui.Name = "KiraHubUI"
 mainGui.ResetOnSpawn = false
@@ -33,157 +33,213 @@ mainGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 mainGui.Enabled = false
 
 local frame = Instance.new("Frame", mainGui)
-frame.Size = UDim2.new(0, 240, 0, 200)
+frame.Size = UDim2.new(0, 280, 0, 200)
 frame.Position = UDim2.new(0, 25, 0, 80)
-frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+frame.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
 frame.Active = true
-Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 10)
+frame.BorderSizePixel = 0
+Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
 
+-- ปุ่มปิด
+local closeButton = Instance.new("TextButton", frame)
+closeButton.Size = UDim2.new(0, 24, 0, 24)
+closeButton.Position = UDim2.new(1, -30, 0, 6)
+closeButton.Text = "✖"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 14
+closeButton.TextColor3 = Color3.fromRGB(1,1, 1)
+closeButton.BackgroundColor3 = Color3.fromRGB(60, 60, 65)
+closeButton.BorderSizePixel = 0
+Instance.new("UICorner", closeButton).CornerRadius = UDim.new(0, 6)
+
+closeButton.MouseButton1Click:Connect(function()
+	mainGui.Enabled = false
+end)
+
+-- หัวข้อ
 local label = Instance.new("TextLabel", frame)
 label.Size = UDim2.new(1, -20, 0, 22)
 label.Position = UDim2.new(0, 10, 0, 6)
-label.Text = "🔐key"
+label.Text = "🔐 key System"
 label.Font = Enum.Font.GothamBold
 label.TextSize = 13
 label.TextColor3 = Color3.new(1, 1, 1)
 label.BackgroundTransparency = 1
 label.TextXAlignment = Enum.TextXAlignment.Left
 
-local scroll = Instance.new("ScrollingFrame", frame)
+-- Frame แทน ScrollFrame (ไม่มีเลื่อน)
+local scroll = Instance.new("Frame", frame)
 scroll.Position = UDim2.new(0, 10, 0, 34)
 scroll.Size = UDim2.new(1, -20, 1, -80)
-scroll.CanvasSize = UDim2.new(0, 0, 0, 0)
-scroll.ScrollBarThickness = 4
 scroll.BackgroundTransparency = 1
-scroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
 scroll.ClipsDescendants = true
 
 local layout = Instance.new("UIListLayout", scroll)
-layout.Padding = UDim.new(0, 6)
+layout.Padding = UDim.new(0, 8)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
+layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
+-- เครดิต
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, -10, 0, 20)
 credit.Position = UDim2.new(0, 5, 1, -24)
-credit.Text = "©by001x"
+credit.Text = "© by001x"
 credit.Font = Enum.Font.Gotham
 credit.TextSize = 11
 credit.TextColor3 = Color3.new(1, 1, 1)
 credit.BackgroundTransparency = 1
 credit.TextXAlignment = Enum.TextXAlignment.Right
 
-
+-- ปุ่ม toggle UI
 logoButton.MouseButton1Click:Connect(function()
-    mainGui.Enabled = not mainGui.Enabled
+	mainGui.Enabled = not mainGui.Enabled
 end)
 
-
+-- Drag Logo
 local dragging, dragStart, startPos, dragInput
 logoButton.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        dragging = true
-        dragStart = input.Position
-        startPos = logoButton.Position
-        dragInput = input
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		dragging = true
+		dragStart = input.Position
+		startPos = logoButton.Position
+		dragInput = input
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				dragging = false
+			end
+		end)
+	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        local delta = input.Position - dragStart
-        local newX = startPos.X.Offset + delta.X
-        local newY = startPos.Y.Offset + delta.Y
-        newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
-        newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
-        logoButton.Position = UDim2.new(0, newX, 0, newY)
-    end
+	if input == dragInput and dragging then
+		local delta = input.Position - dragStart
+		local newX = startPos.X.Offset + delta.X
+		local newY = startPos.Y.Offset + delta.Y
+		newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - logoButton.AbsoluteSize.X)
+		newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - logoButton.AbsoluteSize.Y)
+		logoButton.Position = UDim2.new(0, newX, 0, newY)
+	end
 end)
 
-
+-- Drag Frame
 local frameDragging, frameDragStart, frameStartPos, frameDragInput
 frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-        frameDragging = true
-        frameDragStart = input.Position
-        frameStartPos = frame.Position
-        frameDragInput = input
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                frameDragging = false
-            end
-        end)
-    end
+	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+		frameDragging = true
+		frameDragStart = input.Position
+		frameStartPos = frame.Position
+		frameDragInput = input
+		input.Changed:Connect(function()
+			if input.UserInputState == Enum.UserInputState.End then
+				frameDragging = false
+			end
+		end)
+	end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if input == frameDragInput and frameDragging then
-        local delta = input.Position - frameDragStart
-        local newX = frameStartPos.X.Offset + delta.X
-        local newY = frameStartPos.Y.Offset + delta.Y
-        newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
-        newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
-        frame.Position = UDim2.new(0, newX, 0, newY)
-    end
+	if input == frameDragInput and frameDragging then
+		local delta = input.Position - frameDragStart
+		local newX = frameStartPos.X.Offset + delta.X
+		local newY = frameStartPos.Y.Offset + delta.Y
+		newX = math.clamp(newX, 0, workspace.CurrentCamera.ViewportSize.X - frame.AbsoluteSize.X)
+		newY = math.clamp(newY, 0, workspace.CurrentCamera.ViewportSize.Y - frame.AbsoluteSize.Y)
+		frame.Position = UDim2.new(0, newX, 0, newY)
+	end
 end)
 
-
+-- ฟังก์ชันสร้างปุ่ม
 local function createButton(text, color, callback)
-    local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, 0, 0, 32)
-    button.Text = text
-    button.Font = Enum.Font.GothamBold
-    button.TextSize = 13
-    button.TextColor3 = Color3.new(1, 1, 1)
-    button.BackgroundColor3 = color
-    button.AutoButtonColor = true
-    button.ZIndex = 1
-    button.Parent = scroll
-    Instance.new("UICorner", button).CornerRadius = UDim.new(0, 6)
-    Instance.new("UIStroke", button).Color = Color3.fromRGB(0, 0, 0)
-    button.MouseButton1Click:Connect(callback)
-    return button
+	local button = Instance.new("TextButton")
+	button.Size = UDim2.new(1, -10, 0, 34)
+	button.Text = text
+	button.Font = Enum.Font.GothamBold
+	button.TextSize = 13
+	button.TextColor3 = Color3.new(1, 1, 1)
+	button.BackgroundColor3 = color
+	button.AutoButtonColor = true
+	button.ZIndex = 1
+	button.Parent = scroll
+	Instance.new("UICorner", button).CornerRadius = UDim.new(0, 8)
+	local stroke = Instance.new("UIStroke", button)
+	stroke.Color = Color3.fromRGB(0, 0, 0)
+	stroke.Thickness = 1.2
+	button.MouseButton1Click:Connect(callback)
+	return button
 end
 
-
+-- ช่องใส่คีย์
 local passwordInput = Instance.new("TextBox", scroll)
-passwordInput.Size = UDim2.new(1, 0, 0, 32)
+passwordInput.Size = UDim2.new(1, -10, 0, 32)
 passwordInput.PlaceholderText = "🔑 Enter key to load script"
 passwordInput.Text = ""
 passwordInput.Font = Enum.Font.Gotham
 passwordInput.TextSize = 13
 passwordInput.TextColor3 = Color3.new(1, 1, 1)
-passwordInput.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+passwordInput.PlaceholderColor3 = Color3.fromRGB(170, 170, 170)
+passwordInput.BackgroundColor3 = Color3.fromRGB(60, 60, 70)
 passwordInput.ClearTextOnFocus = false
 passwordInput.TextXAlignment = Enum.TextXAlignment.Left
 Instance.new("UICorner", passwordInput).CornerRadius = UDim.new(0, 6)
 local passwordStroke = Instance.new("UIStroke", passwordInput)
+passwordStroke.Color = Color3.fromRGB(100, 100, 120)
+passwordStroke.Thickness = 1
 passwordStroke.Transparency = 0.4
 
+-- คีย์ถูกต้อง
 local correctKey = "001x"
+
+-- ปุ่ม Confirm Key
 createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
-    if passwordInput.Text == correctKey then
-        label.Text = "✅ Correct key! Loading..."
-        task.wait(1)
-
-        
-        mainGui:Destroy()
-        logoGui:Destroy()
-
-        
-        loadstring(game:HttpGet("https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/GrowAGarde"))();
-    else
-        label.Text = "❌ Incorrect key!"
-    end
+	if passwordInput.Text == correctKey then
+		label.Text = "✅ Correct key! Loading..."
+		pcall(function()
+			game.StarterGui:SetCore("SendNotification", {
+				Title = "XNON HUB",
+				Text = "✅ คีย์ถูกต้อง กำลังโหลดสคริปต์...",
+				Icon = "rbxassetid://79996080860226",
+				Duration = 8,
+			})
+		end)
+		task.wait(1)
+		mainGui:Destroy()
+		logoGui:Destroy()
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/DevKira001x/Kira/refs/heads/main/GrowAGarde"))()
+	else
+		label.Text = "❌ Incorrect key!"
+		pcall(function()
+			game.StarterGui:SetCore("SendNotification", {
+				Title = "XNON HUB",
+				Text = "❌ คีย์ไม่ถูกต้อง กรุณาลองใหม่",
+				Icon = "rbxassetid://79996080860226",
+				Duration = 5,
+				})
+		end)
+	end
 end)
 
-
+-- ปุ่ม Get Key (Discord)
 createButton("📎 Get Key (Discord)", Color3.fromRGB(0, 200, 255), function()
-    setclipboard("https://discord.gg/znS8C7Dmv3")
-    label.Text = "📎 Link copied to clipboard!"
+	setclipboard("https://discord.gg/znS8C7Dmv3")
+	pcall(function()
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "XNON HUB",
+			Text = "📎 ลิงก์ Discord ถูกคัดลอกไปยังคลิปบอร์ดแล้ว!",
+			Icon = "rbxassetid://79996080860226",
+			Duration = 5,
+		})
+	end)
+	label.Text = "📎 Link copied to clipboard!"
+end)
+
+-- แจ้งเตือนตอนรันครั้งแรก
+pcall(function()
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "XNON HUB",
+		Icon = "rbxassetid://79996080860226",
+		Text = "สามารถเอาคีย์ได้ที่ Discord กด GetKey",
+		Duration = 8,
+	})
 end)
