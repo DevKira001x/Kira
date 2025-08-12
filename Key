@@ -11,7 +11,6 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- GUI สำหรับ Toggle
 local logoGui = Instance.new("ScreenGui", playerGui)
 logoGui.Name = "KiraHubLogoToggle"
 logoGui.ResetOnSpawn = false
@@ -24,7 +23,6 @@ logoButton.BackgroundTransparency = 1
 logoButton.Image = "rbxassetid://112379455354342"
 logoButton.ZIndex = 10
 
--- GUI หลัก
 local mainGui = Instance.new("ScreenGui", playerGui)
 mainGui.Name = "KiraHubUI"
 mainGui.ResetOnSpawn = false
@@ -41,7 +39,6 @@ frame.BorderSizePixel = 0
 Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 12)
 Instance.new("UIStroke", frame).Color = Color3.fromRGB(255, 255, 255)
 
--- ปุ่มปิด
 local closeButton = Instance.new("TextButton", frame)
 closeButton.Size = UDim2.new(0, 24, 0, 24)
 closeButton.Position = UDim2.new(1, -30, 0, 6)
@@ -57,7 +54,6 @@ closeButton.MouseButton1Click:Connect(function()
 	mainGui.Enabled = false
 end)
 
--- หัวข้อ
 local label = Instance.new("TextLabel", frame)
 label.Size = UDim2.new(1, -20, 0, 22)
 label.Position = UDim2.new(0, 10, 0, 6)
@@ -68,7 +64,6 @@ label.TextColor3 = Color3.new(1, 1, 1)
 label.BackgroundTransparency = 1
 label.TextXAlignment = Enum.TextXAlignment.Left
 
--- Frame แทน ScrollFrame (ไม่มีเลื่อน)
 local scroll = Instance.new("Frame", frame)
 scroll.Position = UDim2.new(0, 10, 0, 34)
 scroll.Size = UDim2.new(1, -20, 1, -80)
@@ -80,7 +75,6 @@ layout.Padding = UDim.new(0, 8)
 layout.SortOrder = Enum.SortOrder.LayoutOrder
 layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
--- เครดิต
 local credit = Instance.new("TextLabel", frame)
 credit.Size = UDim2.new(1, -10, 0, 20)
 credit.Position = UDim2.new(0, 5, 1, -24)
@@ -91,12 +85,10 @@ credit.TextColor3 = Color3.new(1, 1, 1)
 credit.BackgroundTransparency = 1
 credit.TextXAlignment = Enum.TextXAlignment.Right
 
--- ปุ่ม toggle UI
 logoButton.MouseButton1Click:Connect(function()
 	mainGui.Enabled = not mainGui.Enabled
 end)
 
--- Drag Logo
 local dragging, dragStart, startPos, dragInput
 logoButton.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -123,7 +115,6 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
--- Drag Frame
 local frameDragging, frameDragStart, frameStartPos, frameDragInput
 frame.InputBegan:Connect(function(input)
 	if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
@@ -150,7 +141,6 @@ UserInputService.InputChanged:Connect(function(input)
 	end
 end)
 
--- ฟังก์ชันสร้างปุ่ม
 local function createButton(text, color, callback)
 	local button = Instance.new("TextButton")
 	button.Size = UDim2.new(1, -10, 0, 34)
@@ -170,7 +160,6 @@ local function createButton(text, color, callback)
 	return button
 end
 
--- ช่องใส่คีย์
 local passwordInput = Instance.new("TextBox", scroll)
 passwordInput.Size = UDim2.new(1, -10, 0, 32)
 passwordInput.PlaceholderText = "🔑 Enter key to load script"
@@ -188,10 +177,8 @@ passwordStroke.Color = Color3.fromRGB(100, 100, 120)
 passwordStroke.Thickness = 1
 passwordStroke.Transparency = 0.4
 
--- คีย์ถูกต้อง
 local correctKey = "001x"
 
--- ปุ่ม Confirm Key
 createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
 	if passwordInput.Text == correctKey then
 		label.Text = "✅ Correct key! Loading..."
@@ -220,7 +207,6 @@ createButton("🚀 Confirm Key", Color3.fromRGB(70, 130, 255), function()
 	end
 end)
 
--- ปุ่ม Get Key (Discord)
 createButton("📎 Get Key (Discord)", Color3.fromRGB(0, 200, 255), function()
 	setclipboard("https://discord.gg/znS8C7Dmv3")
 	pcall(function()
@@ -234,7 +220,6 @@ createButton("📎 Get Key (Discord)", Color3.fromRGB(0, 200, 255), function()
 	label.Text = "📎 Link copied to clipboard!"
 end)
 
--- แจ้งเตือนตอนรันครั้งแรก
 pcall(function()
 	game.StarterGui:SetCore("SendNotification", {
 		Title = "XNON HUB",
